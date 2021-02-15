@@ -1,0 +1,205 @@
+/* ---- Colors:
+dark blue : #2a325f
+darker blue: #1c1d3a
+table border/ and maybe buttons: #f98d8a
+main  green color: #bcfb83
+ ------ */
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fredoka+One&family=Shadows+Into+Light&display=swap');
+
+/*
+font-family: 'Shadows Into Light', cursive;
+font-family: 'Fredoka One', cursive;
+*/
+
+/* ------- GENERAL ---- */
+*
+{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,body
+{
+  height: 100%;
+  font-size: 100%;
+  overflow: hidden;
+}
+
+button
+{
+  cursor: pointer;
+}
+
+a
+{
+  text-decoration: none;
+}
+/* ------------------------------------------- */
+/* -------- Home Page Layout --------------- */
+
+/* ---- Containers --- */
+
+#homePageContainer
+{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: #2a325f;
+}
+
+#homePageHeader
+{
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#homePageLogOptionContainer
+{
+  width: 100%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.JoinCreateOptionContainers
+{
+  width: 50%;
+  height: 50%;
+  margin-top: 80px;
+}
+
+#OptionButtonContainer
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#createRoomContainer, #joinRoomContainer
+{
+  display: flex;
+  flex-direction: column;
+  flex-direction: space-around;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/*  --OptionButtonContainer Content ---- */
+#toCreateRoomBtn,#toJoinRoomBtn,#toVsCpuBtn
+{
+  margin: 25px 0;
+  width: 250px;
+  height: 4rem;
+  padding: 15px 15px;
+  color: black;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background-color: #f98d8a;
+  border: 1px solid #f98d8a;
+  font-weight:bold;
+  cursor: pointer;
+  box-shadow: 3px 3px 5px 3px black;
+}
+#toVsCpuBtn a
+{
+  color: black;
+  padding-top: 0.9em;
+  padding-bottom: 0.8em;
+  padding-left: 5.4em;
+  padding-right: 5.4em;
+}
+
+#toCreateRoomBtn:hover,#toJoinRoomBtn:hover,#toVsCpuBtn:hover
+{
+  box-shadow: none;
+}
+
+/* ----------- home Page header content ------------ */
+
+#homePageTitle
+{
+  font-size: 6em;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-family: 'Fredoka One', cursive;
+  letter-spacing: 5px;
+  font-weight: bold;
+  text-shadow: 3px 3px black;
+  color: #bcfb83;
+  text-transform: uppercase;
+}
+
+.homePageLogo
+{
+  height: 80px;
+  width: 80px;
+}
+
+/* --------------createRoomContainer, joinRoomContainer Content -------------*/
+.createJoinInputs
+{
+  width: 400px;
+  padding: 20px 15px;
+  border: 5px solid #f98d8a;
+  background-color: #1c1d3a;
+  border-radius: 4px;
+  font-size: 2em;
+  font-family: 'Fredoka One', cursive;
+  color:white;
+}
+
+.JoinCreateOptionContainers div
+{
+  width: 50%;
+  height: 25%;
+  display: flex;
+}
+
+.createJoinBackBtns
+{
+  height: 90%;
+  width: 30%;
+  color: black;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background-color: #f98d8a;
+  border: 1px solid #f98d8a;
+  font-weight:bold;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-right: 5px;
+  box-shadow: 3px 3px 5px 3px black;
+}
+
+.createJoinBtnsF
+{
+  height: 90%;
+  width: 60%;
+  color: black;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background-color: #bcfb83;
+  border: 1px solid #bcfb83;
+  font-weight:bold;
+  cursor: pointer;
+  box-shadow: 3px 3px 5px 3px black;
+}
+
+.createJoinBackBtns:hover
+{
+  box-shadow: none;
+}
+
+.createJoinBtnsF:hover
+{
+  box-shadow: none;
+}
