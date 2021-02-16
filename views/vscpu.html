@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Durak</title>
+    <meta http-equiv='X-UA-Compatible', content='IE=edge' />
+    <meta name='viewport', content='width=device-width, initial-scale=1' />
+    <link rel="stylesheet" href="style/vscpu.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"integrity='sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=', crossorigin='anonymous'></script>
+    <script src="/socket.io/socket.io.js" defer ></script>
+    <script src="script/vscpu.js" defer ></script>
+  </head>
+  <body>
+    <div id="vsCpuPageContainer">
+      <div id="vsCpuHeader"></div> <!-- end of vsCpuHeader -->
+      <div id="vsCpuTable">
+        <div id="vsCpuTableUp">
+          <div id="cardsContainerOponent">
+          </div><!-- enf of cardsContainerOponent -->
+        </div> <!-- enf of vsCpuTableUp -->
+        <div id="vsCpuTableMiddle">
+          <div id="TableLeftSide">
+            <div id="cardDeckContainer">
+              <div id="deckCoverCard"></div>
+            </div> <!-- cardDeckContainer -->
+          </div> <!-- enf of TableLeftSide -->
+          <div id="TableMiddle">
+            <div class="cardsPositions">
+              <div class="attackPositions" id="attackPosition0">
+              </div>
+              <div class="defendPositions" id="defendPosition0">
+              </div>
+            </div>
+            <div class="cardsPositions">
+              <div class="attackPositions" id="attackPosition1">
+              </div>
+              <div class="defendPositions" id="defendPosition1">
+              </div>
+            </div>
+            <div class="cardsPositions">
+              <div class="attackPositions" id="attackPosition2">
+              </div>
+              <div class="defendPositions" id="defendPosition2">
+              </div>
+            </div>
+            <div class="cardsPositions">
+              <div class="attackPositions" id="attackPosition3">
+              </div>
+              <div class="defendPositions" id="defendPosition3">
+              </div>
+            </div>
+            <div class="cardsPositions">
+              <div class="attackPositions" id="attackPosition4">
+              </div>
+              <div class="defendPositions" id="defendPosition4">
+              </div>
+            </div>
+            <div class="cardsPositions">
+              <div class="attackPositions" id="attackPosition5">
+              </div>
+              <div class="defendPositions" id="defendPosition5">
+              </div>
+            </div>
+          </div> <!-- enf of vsCpuTableMiddle -->
+          <div id="TableRightSide">
+            <div id="cardDeckContainerTrash">
+              <div id="deckCoverCardTrash"></div>
+            </div>
+          </div>
+        </div> <!-- end of vsCpuTableMiddle -->
+        <div id="vsCpuTableDown">
+          <div id="finishBtnContainer"><button id="finishBtn">finish</button></div> <!-- left Btn -->
+          <div id="cardsContainerProponent">
+          </div> <!-- end of cardsContainerProponent -->
+          <div id="drawBtnContainer"><button id="drawBtn">draw</button></div> <!-- right Btn -->
+        </div>
+      </div> <!-- end of vsCpuTable -->
+    </div> <!-- end of vsCpuPageContainer-->
+  </body>
+</html>

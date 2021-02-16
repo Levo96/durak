@@ -17,6 +17,9 @@ app.route('/').get((req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+app.route('/vscpu').get((req, res) => {
+  res.sendFile(__dirname + '/views/vscpu.html');
+})
 
 let onPort = process.env.PORT || 5000
 http.listen(onPort, ()=> {
