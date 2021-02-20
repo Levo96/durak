@@ -379,7 +379,7 @@ class Player
         cardDiv.classList.add("card");
         cardDiv.classList.add("myCardHover");
         cardDiv.setAttribute("id", this.playerHand[i]["DomID"]);
-        cardDiv.setAttribute("dataID" this.playerHand[i]["DomID"]);
+        cardDiv.setAttribute("dataID",this.playerHand[i]["DomID"]);
         $(propponentCardField).append(cardDiv);
         this.playerHand[i]["rendered"] = true;
       }
@@ -394,9 +394,27 @@ class Player
   getCard(index, element)
   {
     propponentCardField.removeChild(propponentCardField.childNodes[index+1]);
-    let returnIndex = 0;
+    let returnIndex = '';
     let domID = element.getAttribute("dataID");
-    return domID;
+    let obj = '';
+    for(let i = 0; i < this.playerHand.length; i++)
+    {
+      if(domID == this.playerHand[i]["DomID"])
+      {
+        returnIndex = i;
+        break;
+      }
+    }
+
+    obj = this.playerHand[returnIndex];
+    let tmpPlayerHand = this.playerHand.filter((cards)=> {
+      if(cards["DomID"] != obj["DomID"])
+      {
+        return cards;
+      }
+    });
+    this.playerHand = tmpPlayerHand;
+    return obj;
   }
 }
 class AiPlayer
@@ -450,7 +468,7 @@ class Board
           let cardDiv = document.createElement('div');
           cardDiv.classList.add("card");
           cardDiv.setAttribute("id", this.onTableAttack[i]["DomID"]);
-          cardDiv.setAttribute("dataID" this.onTableAttack[i]["DomID"]);
+          cardDiv.setAttribute("dataID",this.onTableAttack[i]["DomID"]);
           this.onTableAttack[i]["rendered"] = true;
           switch (i) {
             case 0:$(attackPosition0).append(cardDiv);break;
@@ -529,6 +547,34 @@ class Game
     }
   }
 
+  checkAttackMove(obj)
+  {
+    let cardObj = obj;
+    if(this.board.onTableAttack.length == 0)
+    {
+      return true;
+    }
+    else if(this.board.onTableAttack.length > 0)
+    {
+      for(let i = 0; i < this.board.onTableAttack.length; i++)
+      {
+        if(cardObj["value"] == this.board.onTableAttack[i]["value"])
+        {
+          return true;
+        }
+      }
+    }
+    else if(this.board.onTableDefense.length > 0)
+    {
+      for(let i = 0; i < this.board.onTableDefense.length; i++)
+      {
+        if(cardObj["value"] == this.board.onTableDefense[i]["value"])
+        {
+          return true;
+        }
+      }
+    }
+  }
 
   handCards()
   {
@@ -553,8 +599,12 @@ class Game
     let cardIndex = this.findIndexOfDomElement(e.target);
     if(this.board.checkAttackCounter())
     {
-      let card = this.players[0].getCard(cardIndex,e.target);
-      console.log(card);
+      let tmpObj = this.players[0].playerHand[cardIndex];
+      if(this.checkAttackMove(tmpObj))
+      {
+        let card = this.players[0].getCard(cardIndex,e.target);
+        this.board.setAttackCardToTable(card);
+      }
     }
   }
 
