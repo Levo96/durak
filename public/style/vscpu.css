@@ -171,7 +171,7 @@ a
   justify-content: center;
 }
 
-#jokerSuitCardCover
+.jokerSuitCardCover
 {
   margin-left: -10px;
   transform: rotate(90deg);
@@ -246,7 +246,7 @@ a
 
 #diamond6
 {
-  background-image: ('../assets/cards/6_diamond.png');
+  background-image: url('../assets/cards/6_diamond.png');
 }
 
 #heart6
@@ -354,7 +354,7 @@ a
   background-image: url('../assets/cards/j_club.png');
 }
 
-#diamond
+#diamondJ
 {
   background-image: url('../assets/cards/j_diamond.png');
 }
@@ -435,4 +435,20 @@ a
   background-image: url('../assets/cards/a_spade.png');
 }
 
+.oponentCard
+{
+  height: 99px;
+  width: 72px;
+  border: 1px solid black;
+  border-radius: 10px;
+  cursor: pointer;
+  background-image: url('../assets/cards/backsite_suite.png');
+}
+
+.myCardHover{}
+.myCardHover:hover
+{
+  transition: margin 0.5s;
+  margin-top: -15px;
+}
 /* ------------------------------------------------------------ */
