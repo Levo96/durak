@@ -518,24 +518,22 @@ class AiPlayer
     }
     return answer;
   }
-  //Check that the Card on Table is defendable if not take the cards
+  //Check that the Card on Table is defendable
   isDefendable(obj)
   {
     let defendBool = false;
-    let objRank = obj["rank"];
-    if(obj["jokerSuit"])
+    let cardObj = obj;
+
+    if(cardObj["jokerSuit"])
     {
       if(this.doIHaveAnyJokeSuitCard())
       {
-        for(let i = 0; i < this.playerHand.lenght; i++)
+        for(let i = 0; i < this.playerHand.length; i++)
         {
-          if(this.playerHand[i]["jokerSuit"])
+          if(this.playerHand[i]["jokerSuit"] && this.playerHand[i]["rank"] > cardObj["rank"])
           {
-            if(this.playerHand[i]["rank"] > objRank)
-            {
-              defendBool = true;
-              break;
-            }
+            defendBool = true;
+            break;
           }
         }
       }
@@ -548,13 +546,10 @@ class AiPlayer
     {
       for(let i = 0; i < this.playerHand.length; i++)
       {
-        if(this.playerHand[i]["suit"] == obj["suit"])
+        if(this.playerHand[i]["suit"] == cardObj["suit"] && this.playerHand[i]["rank"] > cardObj["rank"])
         {
-          if(this.playerHand[i]["rank"] > objRank)
-          {
-            defendBool = true;
-            break;
-          }
+          defendBool = true;
+          break;
         }
       }
     }
@@ -563,46 +558,51 @@ class AiPlayer
 
   findMinJokerSuitCard(obj)
   {
-    let arrayOfJokerSuitCards = [];
-    let searchedDomId = '';
+    let arrayOfJokerSuitsCards = [];
+    let sortedArrayOfJokerSuitsCards = [];
     let cardObj = obj;
+    let searchedDomId = '';
     let resultObj = '';
 
-
+    //first sort out all joker suits cards
     for(let i = 0; i < this.playerHand.length; i++)
     {
       if(this.playerHand[i]["jokerSuit"])
       {
-        arrayOfJokerSuitCards.push(this.playerHand[i]);
+        arrayOfJokerSuitsCards.push(this.playerHand[i]);
       }
     }
 
-    let sortedArrayJokerSuitsCard = arrayOfJokerSuitCards.sort((a, b) => {
-      return a['rank'] - b['rank'];
+    //second sort all jokerSuit card from lowest rank to highest
+    sortedArrayOfJokerSuitsCards = arrayOfJokerSuitsCards.sort((a, b) => {
+      return a["rank"] - b["rank"];
     });
 
-    for(let i = 0; i < sortedArrayJokerSuitsCard.length; i++)
+    //third find the object that has higher rank and the same suit
+    for(let i = 0; i < sortedArrayOfJokerSuitsCards.length; i++)
     {
-      if(sortedArrayJokerSuitsCard[i]["rank"] > cardObj["rank"])
+      if(sortedArrayOfJokerSuitsCards[i]["rank"] > cardObj["rank"])
       {
-        searchedDomId = sortedArrayJokerSuitsCard[i]["DomID"];
+        searchedDomId = sortedArrayOfJokerSuitsCards[i]["DomID"];
         break;
       }
     }
 
+    //now find the card by searchedDomId
     for(let i = 0; i < this.playerHand.length; i++)
     {
       if(this.playerHand[i]["DomID"] == searchedDomId)
       {
-        resultObj = Object.assign({}, this.playerHand[i]);
+        resultObj = this.playerHand[i];
         break;
       }
     }
 
-    let newPlayerHand = this.playerHand.filter((cards) => {
-      if(cards["DomID"] != resultObj["DomID"])
+    //now take out the card out of playerHand array
+    let newPlayerHand = this.playerHand.filter((card) => {
+      if(card["DomID"] != resultObj["DomID"])
       {
-        return cards;
+        return card;
       }
     });
 
@@ -613,44 +613,51 @@ class AiPlayer
 
   findMinRegCard(obj)
   {
-    let arrayOfallRegCards = [];
+    let arrayOfRegularCards = [];
+    let sortedArrayOfRegCards = [];
+    let cardObj = obj;
     let searchedDomId = '';
-    let cardObj = '';
+    let resultObj = '';
 
+    //first sort out all regular cards
     for(let i = 0; i < this.playerHand.length; i++)
     {
       if(this.playerHand[i]["jokerSuit"] == false)
       {
-        arrayOfallRegCards.push(this.playerHand[i]);
+        arrayOfRegularCards.push(this.playerHand[i]);
       }
     }
 
-    let sortedArrayOfAllRegCards = this.playerHand.sort((a, b) => {
+    //second sort regular Cards from lowest ranking to the highest
+    sortedArrayOfRegCards = arrayOfRegularCards.sort((a, b) => {
       return a["rank"] - b["rank"];
     });
 
-    for(let i = 0; i < sortedArrayOfAllRegCards.length; i++)
+    //third find the object that has higher rank and the same suit
+    for(let i = 0; i < sortedArrayOfRegCards.length; i++)
     {
-      if(sortedArrayOfAllRegCards[i]["rank"] > cardObj["rank"])
+      if(sortedArrayOfRegCards[i]["suit"] == cardObj["suit"] && sortedArrayOfRegCards[i]["rank"] > cardObj["rank"])
       {
-        searchedDomId = sortedArrayOfAllRegCards[i]["DomID"];
+        searchedDomId = sortedArrayOfRegCards[i]["DomID"];
         break;
       }
     }
 
+    //now find the card by searchedDomId
     for(let i = 0; i < this.playerHand.length; i++)
     {
       if(this.playerHand[i]["DomID"] == searchedDomId)
       {
-        resultObj = Objects.assign({},(this.playerHand[i]);
+        resultObj = this.playerHand[i];
         break;
       }
     }
 
-    let newPlayerHand = this.playerHand.filter((cards) => {
-      if(cards["DomID"] != resultObj["DomID"])
+    //now take out the card out of playerHand array
+    let newPlayerHand = this.playerHand.filter((card) => {
+      if(card["DomID"] != resultObj["DomID"])
       {
-        return cards;
+        return card;
       }
     });
 
@@ -661,24 +668,17 @@ class AiPlayer
   //defend the card that is coming
   getDefendCard(obj)
   {
-    if(this.isDefendable(obj))
+    let cardObj = obj;
+    let returnCard;
+    if(cardObj["jokerSuit"])
     {
-      let defendCard;
-      if(obj["jokerSuit"])
-      {
-        defendCard = findMinJokerSuitCard(obj);
-        return defendCard;
-      }
-      else
-      {
-        defenCard = findMinRegCard(obj);
-        return defendCard;
-      }
+      returnCard = this.findMinJokerSuitCard(cardObj);
     }
     else
     {
-      console.log("Under construction");
+      returnCard = this.findMinRegCard(cardObj);
     }
+    return returnCard;
   }
 }
 
@@ -799,8 +799,24 @@ class Board
     for(let x in this.attackDefenseCheck)
     {
       this.attackDefenseCheck[x] = false;
-      console.log(this.attackDefenseCheck[x]);
     }
+  }
+
+  resetTable()
+  {
+    this.onTableAttack = [];
+    this.onTableDefense = [];
+    let allAttackPositionsDom = document.getElementsByClassName('attackPositions');
+    let allDefendPositionsDom = document.getElementsByClassName('defendPositions');
+    let allAttackDefendDomPositions = [...allAttackPositionsDom, ...allDefendPositionsDom];
+
+    for(let i = 0; i < allAttackDefendDomPositions.length; i++)
+    {
+      $(allAttackDefendDomPositions).empty();
+    }
+
+    this.resetAttackCount();
+    this.resetAttackDefenseCheck();
   }
 
 }
@@ -817,11 +833,6 @@ class Game
     this.players = [new Player("pc"), new AiPlayer("ai")];
     this.deck = new Deck().startDeck();
     this.board = new Board;
-    this.arrayOfFunctions = [
-      this.playerMove,
-      this.aiMove,
-      this.startRound
-    ];
   }
 
   findCardIndexByDomID(elmnt)
@@ -896,52 +907,90 @@ class Game
   {
     if(this.board.attackDefenseCheck['position0'] == false && this.board.onTableAttack[0])
     {
-      let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[0]);
-      this.board.setDefendCardToTable(defenCard);
-      this.board.attackDefenseCheck['position0'] = true;
+      if(this.players[1].isDefendable(this.board.onTableAttack[0]))
+      {
+        let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[0]);
+        console.log('defendCard');
+        console.log(defendCard);
+        this.board.setDefendCardToTable(defendCard);
+      }
+      else
+      {
+        this.aiTakeCard();
+        this.startRound();
+      }
     }
-
     if(this.board.attackDefenseCheck['position1'] == false && this.board.onTableAttack[1])
     {
-      let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[1]);
-      this.board.setDefendCardToTable(defenCard);
-      this.board.attackDefenseCheck['position1'] = true;
+      if(this.players[1].isDefendable(this.board.onTableAttack[1]))
+      {
+        let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[1]);
+        this.board.setDefendCardToTable(defendCard);
+      }
+      else
+      {
+        this.aiTakeCard();
+        this.startRound();
+      }
     }
-
     if(this.board.attackDefenseCheck['position2'] == false && this.board.onTableAttack[2])
     {
-      let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[2]);
-      this.board.setDefendCardToTable(defendCard);
-      this.board.attackDefenseCheck['position2'] = true;
+      if(this.players[1].isDefendable(this.board.onTableAttack[2]))
+      {
+        let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[2]);
+        this.board.setDefendCardToTable(defendCard);
+      }
+      else
+      {
+        this.aiTakeCard();
+        this.startRound();
+      }
     }
-
     if(this.board.attackDefenseCheck['position3'] == false && this.board.onTableAttack[3])
     {
-      let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[3]);
-      this.board.setDefendCardToTable(defendCard);
-      this.board.attackDefenseCheck['position3'] = true;
+      if(this.players[1].isDefendable(this.board.onTableAttack[3]))
+      {
+        let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[3]);
+        this.board.setDefendCardToTable(defendCard);
+      }
+      else
+      {
+        this.aiTakeCard();
+        this.startRound();
+      }
     }
-
     if(this.board.attackDefenseCheck['position4'] == false && this.board.onTableAttack[4])
     {
-      let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[4]);
-      this.board.setDefendCardToTable(defendCard);
-      this.board.attackDefenseCheck['position4'] = true;
+      if(this.players[1].isDefendable(this.board.onTableAttack[4]))
+      {
+        let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[4]);
+        this.board.setDefendCardToTable(defendCard);
+      }
+      else
+      {
+        this.aiTakeCard();
+        this.startRound();
+      }
     }
-
     if(this.board.attackDefenseCheck['position5'] == false && this.board.onTableAttack[5])
     {
-      let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[5]);
-      this.board.setDefendCardToTable(defendCard);
-      this.board.attackDefenseCheck['position5'] = true;
+      if(this.players[1].isDefendable(this.board.onTableAttack[5]))
+      {
+        let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[5]);
+        this.board.setDefendCardToTable(defendCard);
+      }
+      else
+      {
+        this.aiTakeCard();
+        this.startRound();
+      }
     }
-
   }
 
   playerMove(e)
   {
     let cardIndex = this.findCardIndexByDomID(e.target);
-    let cardObjCopy = Object.assign({},this.players[0].playerHand[cardIndex]); //copy of the cardObject
+    let cardObjCopy = this.players[0].playerHand[cardIndex] //copy of the cardObject
     if(this.turn == "attack" && this.playerTurn == "pc")
     {
       if(this.board.checkAttackCounter() && this.checkAttackMove(cardObjCopy))
@@ -957,13 +1006,49 @@ class Game
     }
   }
 
+  aiTakeCard()
+  {
+    let allCardsOnTable = [...this.board.onTableAttack, ...this.board.onTableDefense];
+    for(let i = 0; i < allCardsOnTable.length; i++)
+    {
+      allCardsOnTable[i]["rendered"] = false;
+      this.players[1].addCard(allCards[i]);
+    }
+    this.board.resetTable();
 
+  }
 
   startRound()
   {
     this.handCards();
   }
 
+  getTurnInfos()
+  {
+    return this.turn;
+  }
+
+  getPlayerTurnInfos()
+  {
+    return this.playerTurn;
+  }
+
+  playerTakeCards()
+  {
+    let allCardsOnTable = [...this.board.onTableAttack, ...this.board.onTableDefense];
+    for(let i = 0; i < allCardsOnTable.length; i++)
+    {
+      allCardsOnTable[i]["rendered"] = false;
+      this.players[0].addCard(allCards[i]);
+    }
+    this.board.resetTable()
+  }
+
+  playerFinishRound()
+  {
+    deckCoverCardTrash.style.visibility = "visible";
+    this.board.resetTable();
+  }
 
   startGame()
   {
@@ -975,3 +1060,28 @@ class Game
 
 let game = new Game();
 game.startGame();
+
+
+finishBtn.addEventListener('click', () => {
+  let turn = game.getTurnInfos();
+  let playerTurn = game.getPlayerTurnInfos();
+
+
+  if(turn == "attack" && playerTurn == "pc")
+  {
+    game.playerFinishRound();
+    //chane the turn 
+    game.startRound();
+  }
+});
+
+
+drawBtn.addEventListener('click', () => {
+  let turn = game.getTurnInfos();
+  let playerTurn = game.getPlayerTurnInfos();
+
+  if(turn == "attack" && playerTurn == "ai")
+  {
+    game.playerTakeCards();
+  }
+});
