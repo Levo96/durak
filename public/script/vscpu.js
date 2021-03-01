@@ -562,6 +562,7 @@ class AiPlayer
     let sortedArrayOfJokerSuitsCards = [];
     let cardObj = obj;
     let searchedDomId = '';
+    let indexDom = 0;
     let resultObj = '';
 
     //first sort out all joker suits cards
@@ -594,6 +595,7 @@ class AiPlayer
       if(this.playerHand[i]["DomID"] == searchedDomId)
       {
         resultObj = this.playerHand[i];
+        indexDom = i;
         break;
       }
     }
@@ -607,6 +609,7 @@ class AiPlayer
     });
 
     this.playerHand = newPlayerHand;
+    opponetCardField.removeChild(opponetCardField.childNodes[index + 1]);
     return resultObj;
   }
 
@@ -617,6 +620,7 @@ class AiPlayer
     let sortedArrayOfRegCards = [];
     let cardObj = obj;
     let searchedDomId = '';
+    let indexDom = 0;
     let resultObj = '';
 
     //first sort out all regular cards
@@ -649,6 +653,7 @@ class AiPlayer
       if(this.playerHand[i]["DomID"] == searchedDomId)
       {
         resultObj = this.playerHand[i];
+        indexDom = i;
         break;
       }
     }
@@ -662,6 +667,7 @@ class AiPlayer
     });
 
     this.playerHand = newPlayerHand;
+    opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
     return resultObj;
   }
 
@@ -887,19 +893,69 @@ class Game
 
   handCards()
   {
-    if(this.players[0].playerHand.length < 6)
+    let currentTurn = this.getTurnInfos();
+    let currentPlayerTurn = this.getPlayerTurnInfos();
+
+    if(this.deck.length == 1)
     {
-      for(let i = this.players[0].playerHand.length; i < 6;  i++)
+      deckCoverCard.style.visibility = "hidden";
+    }
+
+    if(this.deck.length == 0)
+    {
+      jokerSuitCardCover.style.visibility = "hidden";
+    }
+
+
+    if(currentTurn == "atack" && currentPlayerTurn == "pc")
+    {
+      if(this.players[0].playerHand.length < 6)
       {
-        this.players[0].addCard(this.deck.pop());
+        for(let i = this.players[0].playerHand.length; i < 6; i++)
+        {
+          if(this.deck.length > 0)
+          {
+            this.players[0].addCard(this.deck.pop());
+          }
+        }
+      }
+
+      if(this.players[1].playerHand.length < 6)
+      {
+        for(let i = this.players[1].playerHand.length; i < 6; i++)
+        {
+          if(this.deck.lenght > 0)
+          {
+            this.players[1].addCard(this.deck.pop());
+          }
+        }
       }
     }
-    if(this.players[1].playerHand.length < 6)
+
+    if(currentTurn == "attack" && currentPlayerTurn == "ai")
     {
-      for(let i = this.players[1].playerHand.length; i < 6; i++)
+      if(this.players[1].playerHand.lenght < 6)
       {
-        this.players[1].addCard(this.deck.pop());
+        for(let i = this.players[1].playerHand.length; i < 6; i++)
+        {
+          if(this.deck.lenght > 0)
+          {
+            this.players[1].addCard(this.deck.pop());
+          }
+        }
       }
+
+      if(this.players[0].playerHand.length < 6)
+      {
+        for(let i = this.players[0].playerHand.length; i < 6; i++)
+        {
+          if(this.deck.lenght > 0)
+          {
+            this.players[0].addCard(this.deck.pop());
+          }
+        }
+      }
+
     }
   }
 
@@ -910,9 +966,9 @@ class Game
       if(this.players[1].isDefendable(this.board.onTableAttack[0]))
       {
         let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[0]);
-        console.log('defendCard');
-        console.log(defendCard);
         this.board.setDefendCardToTable(defendCard);
+        this.board.attackDefenseCheck['position0'] = true;
+        this.checkWinner();
       }
       else
       {
@@ -926,6 +982,8 @@ class Game
       {
         let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[1]);
         this.board.setDefendCardToTable(defendCard);
+        this.board.attackDefenseCheck['position1'] = true;
+        this.checkWinner();
       }
       else
       {
@@ -939,6 +997,8 @@ class Game
       {
         let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[2]);
         this.board.setDefendCardToTable(defendCard);
+        this.board.attackDefenseCheck['position2'] = true;
+        this.checkWinner();
       }
       else
       {
@@ -952,6 +1012,8 @@ class Game
       {
         let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[3]);
         this.board.setDefendCardToTable(defendCard);
+        this.board.attackDefenseCheck['position3'] = true;
+        this.checkWinner();
       }
       else
       {
@@ -965,6 +1027,8 @@ class Game
       {
         let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[4]);
         this.board.setDefendCardToTable(defendCard);
+        this.board.attackDefenseCheck['position4'] = true;
+        this.checkWinner();
       }
       else
       {
@@ -978,6 +1042,8 @@ class Game
       {
         let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[5]);
         this.board.setDefendCardToTable(defendCard);
+        this.board.attackDefenseCheck['position5'] = true;
+        this.checkWinner();
       }
       else
       {
@@ -987,20 +1053,60 @@ class Game
     }
   }
 
+  showWinnerOverlay(str)
+  {
+    console.log( str + "WON");
+  }
+
+  checkWinner()
+  {
+    if(this.deck.length == 0)
+    {
+      let checkTurn = this.getTurnInfos();
+      let playerTurn = this.getPlayerTurnInfos();
+
+      if(checkTurn == "attack" && playerTurn == "pc")
+      {
+        if(this.players[0].playerHand.length == 0)
+        {
+          this.showWinnerOverlay('you');
+        }
+        else if(this.players[1].playerHand.length == 0)
+        {
+          this.showWinnerOverlay('dumb ai');
+        }
+      }
+
+      if(checkTurn == "attack" && playerTurn == "ai")
+      {
+        if(this.players[1].playerHand.length == 0)
+        {
+          this.showWinnerOverlay('dumb ai');
+        }
+        else if(this.players[0].playerHand.lenght == 0)
+        {
+          this.showWinnerOverlay('you');
+        }
+      }
+    }
+  }
   playerMove(e)
   {
     let cardIndex = this.findCardIndexByDomID(e.target);
     let cardObjCopy = this.players[0].playerHand[cardIndex] //copy of the cardObject
-    if(this.turn == "attack" && this.playerTurn == "pc")
+    let currentTurn = this.getTurnInfos();
+    let currentPlayerTurn = this.getPlayerTurnInfos();
+    if(currentTurn == "attack" && currentPlayerTurn == "pc")
     {
       if(this.board.checkAttackCounter() && this.checkAttackMove(cardObjCopy))
       {
         let card = this.players[0].getCard(cardIndex, cardObjCopy["DomID"]) // get the actual cardObj
         this.board.setAttackCardToTable(card);
+        this.checkWinner();
         this.aiDefendMove();
       }
     }
-    if(this.turn == "attack" && this.playerTurn == "ai")
+    if(currentTurn == "attack" && currentPlayerTurn == "ai")
     {
 
     }
@@ -1015,7 +1121,19 @@ class Game
       this.players[1].addCard(allCards[i]);
     }
     this.board.resetTable();
+  }
 
+
+  toggleTurnToAi()
+  {
+    this.turn = "attack";
+    this.playerTurn = "ai";
+  }
+
+  toggleTurnToPc()
+  {
+    this.turn = "attack";
+    this.playerTurn = "pc";
   }
 
   startRound()
@@ -1050,6 +1168,11 @@ class Game
     this.board.resetTable();
   }
 
+  aiAttackMove()
+  {
+    console.log("Hello World");
+  }
+
   startGame()
   {
     this.initTurn();
@@ -1069,9 +1192,13 @@ finishBtn.addEventListener('click', () => {
 
   if(turn == "attack" && playerTurn == "pc")
   {
-    game.playerFinishRound();
-    //chane the turn 
-    game.startRound();
+    if(game.board.onTableAttack.length == game.board.onTableDefense.length)
+    {
+      game.playerFinishRound();
+      game.toggleTurnToAi();
+      game.startRound();
+      game.aiAttackMove();
+    }
   }
 });
 
@@ -1083,5 +1210,7 @@ drawBtn.addEventListener('click', () => {
   if(turn == "attack" && playerTurn == "ai")
   {
     game.playerTakeCards();
+    game.startRound();
+    game.aiAttackMove();
   }
 });
