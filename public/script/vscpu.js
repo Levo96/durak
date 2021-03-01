@@ -608,8 +608,10 @@ class AiPlayer
       }
     });
 
+    //playerHand Array is now assigned to the new newPlayerHand Array
     this.playerHand = newPlayerHand;
-    opponetCardField.removeChild(opponetCardField.childNodes[index + 1]);
+    //remove dom div/card
+    opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
     return resultObj;
   }
 
@@ -779,7 +781,7 @@ class Board
     this.incrementAttackCount();
     this.renderBoard();
   }
-
+  //sets card to Defend Table Position
   setDefendCardToTable(card)
   {
     card["rendered"] = false;
@@ -799,7 +801,7 @@ class Board
       return false;
     }
   }
-
+  // resets the attackDefenseCheck Obj
   resetAttackDefenseCheck()
   {
     for(let x in this.attackDefenseCheck)
@@ -807,7 +809,7 @@ class Board
       this.attackDefenseCheck[x] = false;
     }
   }
-
+  //resets the whole table : arrays and dom elements
   resetTable()
   {
     this.onTableAttack = [];
@@ -827,7 +829,7 @@ class Board
 
 }
 
-
+//Game Class
 class Game
 {
   constructor()
@@ -840,7 +842,7 @@ class Game
     this.deck = new Deck().startDeck();
     this.board = new Board;
   }
-
+  //finds index by the dom Id
   findCardIndexByDomID(elmnt)
   {
     let domIdStr = elmnt.getAttribute("dataID");
@@ -855,13 +857,13 @@ class Game
     }
     return index;
   }
-
+  //sets the start turn for the human player | so the human player always starts against ai
   initTurn()
   {
     this.turn = "attack";
     this.playerTurn = "pc";
   }
-
+  //check if atack reattack move is legit
   checkAttackMove(obj)
   {
     let cardObj = obj;
@@ -890,7 +892,7 @@ class Game
       }
     }
   }
-
+  //hands cards
   handCards()
   {
     let currentTurn = this.getTurnInfos();
@@ -958,7 +960,7 @@ class Game
 
     }
   }
-
+  //calls Ai to Defend Move
   aiDefendMove()
   {
     if(this.board.attackDefenseCheck['position0'] == false && this.board.onTableAttack[0])
@@ -1052,12 +1054,12 @@ class Game
       }
     }
   }
-
+  //lays an overlay over the page/ table container and makes the page beneath unclickable , stopping the game and shownig winner
   showWinnerOverlay(str)
   {
     console.log( str + "WON");
   }
-
+  //checks winner and if there is a winner call showWinnerOverlay() Method
   checkWinner()
   {
     if(this.deck.length == 0)
@@ -1090,6 +1092,7 @@ class Game
       }
     }
   }
+  //playerMove Method for clicking the DOM CARDS
   playerMove(e)
   {
     let cardIndex = this.findCardIndexByDomID(e.target);
@@ -1112,6 +1115,7 @@ class Game
     }
   }
 
+  //calls the ai to take all the cards on table
   aiTakeCard()
   {
     let allCardsOnTable = [...this.board.onTableAttack, ...this.board.onTableDefense];
@@ -1123,34 +1127,34 @@ class Game
     this.board.resetTable();
   }
 
-
+  //switches turn for ai to attack
   toggleTurnToAi()
   {
     this.turn = "attack";
     this.playerTurn = "ai";
   }
-
+  //switches turn for pc to attack
   toggleTurnToPc()
   {
     this.turn = "attack";
     this.playerTurn = "pc";
   }
-
+  //starts Round and hands cards to players
   startRound()
   {
     this.handCards();
   }
-
+  //gets TurnInfos
   getTurnInfos()
   {
     return this.turn;
   }
-
+  //get PlayerTurn Infos
   getPlayerTurnInfos()
   {
     return this.playerTurn;
   }
-
+  //calls player to take all cards on table
   playerTakeCards()
   {
     let allCardsOnTable = [...this.board.onTableAttack, ...this.board.onTableDefense];
@@ -1161,18 +1165,18 @@ class Game
     }
     this.board.resetTable()
   }
-
+  //finishes the round for the human player if he's attacking
   playerFinishRound()
   {
     deckCoverCardTrash.style.visibility = "visible";
     this.board.resetTable();
   }
-
+  //calls ai to make a attackMove
   aiAttackMove()
   {
     console.log("Hello World");
   }
-
+  //starts the game
   startGame()
   {
     this.initTurn();
