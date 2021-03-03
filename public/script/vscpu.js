@@ -1154,7 +1154,6 @@ class Game
         this.board.setAttackCardToTable(card);
         this.checkWinner();
         this.aiDefendMove();
-        console.log(this.players[1].playerHand);
       }
     }
     if(currentTurn == "attack" && currentPlayerTurn == "ai")
@@ -1166,11 +1165,11 @@ class Game
   //calls the ai to take all the cards on table
   aiTakeCard()
   {
-    let allCardsOnTable = [...this.board.onTableAttack, ...this.board.onTableDefense];
-    for(let i = 0; i < allCardsOnTable.length; i++)
+    let allCardsOnTableCurrent = [...this.board.onTableAttack, ...this.board.onTableDefense];
+    for(let i = 0; i < allCardsOnTableCurrent.length; i++)
     {
-      allCardsOnTable[i]["rendered"] = false;
-      this.players[1].addCard(allCards[i]);
+      allCardsOnTableCurrent[i]["rendered"] = false;
+      this.players[1].addCard(allCardsOnTableCurrent[i]);
     }
     this.board.resetTable();
   }
