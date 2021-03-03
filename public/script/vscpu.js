@@ -494,9 +494,9 @@ class AiPlayer
   regCardsCount()
   {
     let count = 0;
-    for(let i = 0; i < this.playerHand.lenght; i++)
+    for(let i = 0; i < this.playerHand.length; i++)
     {
-      if(this.playerHand[i]["jokerSuits"] == false)
+      if(this.playerHand[i]["jokerSuit"] == false)
       {
         count += 1;
       }
@@ -730,8 +730,14 @@ class AiPlayer
 
   getAttackCard(arr1, arr2)
   {
-    let allCardsOnTableNewAttackRound = [...arr1,...arr2];
-    console.log(allCardsOnTableNewAttackRound);
+    let allCardsOnTableAttackRound = [...arr1, ...arr2];
+    let rank = 9;
+    let domIDSearchStr = '';
+    if(allCardsOnTableAttackRound.length == 0)
+    {
+
+    }
+
   }
 
 
@@ -978,7 +984,6 @@ class Game
           }
         }
       }
-
     }
 
     if(currentTurn == "attack" && currentPlayerTurn == "ai")
@@ -1004,7 +1009,6 @@ class Game
           }
         }
       }
-
     }
   }
   //calls Ai to Defend Move
