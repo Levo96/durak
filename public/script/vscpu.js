@@ -615,6 +615,32 @@ class AiPlayer
     return resultObj;
   }
 
+  canReAttack(arr1, arr2)
+  {
+    let allCardsOnTableAttackRound = [...arr1, ...arr2];
+    let canReAttacCheck = false;
+
+
+    if(allCardsOnTableAttackRound.length == 0)
+    {
+      canReAttacCheck = true;
+    }
+    else
+    {
+      for(let i = 0; i < allCardsOnTableAttackRound.length; i++)
+      {
+        for(let j = 0; j < this.playerHand.length; j++)
+        {
+          if(allCardsOnTableAttackRound[i]["value"] = this.playerHand[j]["value"])
+          {
+            canReAttacCheck = true;
+            break;
+          }
+        }
+      }
+    }
+    return canReAttacCheck;
+  }
 
   findMinRegCard(obj)
   {
@@ -688,6 +714,27 @@ class AiPlayer
     }
     return returnCard;
   }
+
+  anyRegCardsLeft()
+  {
+    let regCardsCounter = this.regCardsCount();
+    if(regCardsCounter == 0)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+
+  getAttackCard(arr1, arr2)
+  {
+    let allCardsOnTableNewAttackRound = [...arr1,...arr2];
+    console.log(allCardsOnTableNewAttackRound);
+  }
+
+
 }
 
 
@@ -909,9 +956,9 @@ class Game
     }
 
 
-    if(currentTurn == "atack" && currentPlayerTurn == "pc")
+    if(currentTurn == "attack" && currentPlayerTurn == "pc")
     {
-      if(this.players[0].playerHand.length < 6)
+      if(this.players[0].playerHand.length < 7)
       {
         for(let i = this.players[0].playerHand.length; i < 6; i++)
         {
@@ -921,22 +968,22 @@ class Game
           }
         }
       }
-
-      if(this.players[1].playerHand.length < 6)
+      if(this.players[1].playerHand.length < 7)
       {
         for(let i = this.players[1].playerHand.length; i < 6; i++)
         {
-          if(this.deck.lenght > 0)
+          if(this.deck.length > 0)
           {
             this.players[1].addCard(this.deck.pop());
           }
         }
       }
+
     }
 
     if(currentTurn == "attack" && currentPlayerTurn == "ai")
     {
-      if(this.players[1].playerHand.lenght < 6)
+      if(this.players[1].playerHand.length < 7)
       {
         for(let i = this.players[1].playerHand.length; i < 6; i++)
         {
@@ -947,7 +994,7 @@ class Game
         }
       }
 
-      if(this.players[0].playerHand.length < 6)
+      if(this.players[0].playerHand.length < 7)
       {
         for(let i = this.players[0].playerHand.length; i < 6; i++)
         {
@@ -1107,6 +1154,7 @@ class Game
         this.board.setAttackCardToTable(card);
         this.checkWinner();
         this.aiDefendMove();
+        console.log(this.players[1].playerHand);
       }
     }
     if(currentTurn == "attack" && currentPlayerTurn == "ai")
@@ -1174,7 +1222,10 @@ class Game
   //calls ai to make a attackMove
   aiAttackMove()
   {
-    console.log("Hello World");
+    if(this.players[1].canReAttack(this.board.onTableAttack, this.board.onTableDefense))
+    {
+      let card = this.players[1].getAttackCard(this.board.onTableAttack, this.board.onTableDefense);
+    }
   }
   //starts the game
   startGame()
