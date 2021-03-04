@@ -735,13 +735,70 @@ class AiPlayer
     let domIDSearchStr = '';
     if(allCardsOnTableAttackRound.length == 0)
     {
-
+      if(this.anyRegCardsLeft())
+      {
+        for(let i = 0; i < this.playerHand.length; i++)
+        {
+          if(this.playerHand[i]["jokerSuit"] == false && this.playerHand[i]["rank"] <= rank)
+          {
+            rank = this.playerHand[i]["rank"];
+            domIDSearchStr = this.playerHand[i]["DomID"];
+          }
+        }
+      }
+      else
+      {
+        for(let i = 0; i < this.playerHand.length; i++)
+        {
+          if(this.playerHand[i]["rank"] <= rank)
+          {
+            rank = this.playerHand[i]["rank"];
+            domIDSearchStr = this.playerHand[i]["DomID"];
+          }
+        }
+      }
     }
+    else
+    {
+      for(let i = 0; i < allCardsOnTableAttackRound.length; i++)
+      {
+        for(let j = 0; j < this.playerHand.length; i++)
+        {
+          if(allCardsOnTableAttackRound[i]["value"] == this.playerHand[j]["value"])
+          {
+            domIDSearchStr = this.playerHand[j]["domIDSearchStr"];
+          }
+        }
+      }
+    }
+
+    let obj = '';
+    let indexDom = 0;
+    for(let i = 0; i < this.playerHand.length; i++)
+    {
+      if(this.playerHand[i]["DomID"] == domIDSearchStr)
+      {
+        obj = this.playerHand[i];
+        indexDom = i;
+        break;
+      }
+    }
+
+    let newPlayerHand = this.playerHand.filter((card) => {
+      if(card["DomID"] != domIDSearchStr)
+      {
+        return card;
+      }
+    });
+
+    opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
+    this.playerHand = newPlayerHand;
+    return obj;
 
   }
 
 
-}
+} // end of AI class
 
 
 //class Board
@@ -945,68 +1002,85 @@ class Game
       }
     }
   }
+
+  checkDefendMove(obj)
+  {
+    let check = false;
+    let copyOfCardObj = obj;
+    if(this.board.attackDefenseCheck['position0'] == false && this.board.onTableAttack[0])
+    {
+
+    }
+    if(this.board.attackDefenseCheck['position1'] == false && this.board.onTableAttack[1])
+    {
+
+    }
+    if(this.board.attackDefenseCheck['position2'] == false && this.board.onTableAttack[2])
+    {
+
+    }
+    if(this.board.attackDefenseCheck['position3'] == false && this.board.onTableAttack[3])
+    {
+
+    }
+    if(this.board.attackDefenseCheck['position4'] == false && this.board.onTableAttack[4])
+    {
+
+    }
+    if(this.board.attackDefenseCheck['position5'] == false && this.board.onTableAttack[5])
+    {
+
+    }
+  }
+
+  checkDeckDomRender()
+  {
+    if(this.deck.length == 1)
+    {
+      deckCoverCard.style.visibility = "hidden";
+    }
+    else if(this.deck.length == 0)
+    {
+      jokerSuitCardCover.style.visibility = "hidden";
+    }
+    else
+    {
+      return;
+    }
+  }
+
   //hands cards
   handCards()
   {
     let currentTurn = this.getTurnInfos();
     let currentPlayerTurn = this.getPlayerTurnInfos();
-
-    if(this.deck.length == 1)
+    this.checkDeckDomRender();
+    if(this.deck.length > 0)
     {
-      deckCoverCard.style.visibility = "hidden";
-    }
-
-    if(this.deck.length == 0)
-    {
-      jokerSuitCardCover.style.visibility = "hidden";
-    }
-
-
-    if(currentTurn == "attack" && currentPlayerTurn == "pc")
-    {
-      if(this.players[0].playerHand.length < 7)
+      let aiPlayerHandLength = this.players[1].playerHand.length;
+      let pcPlayerHandLength = this.players[0].playerHand.length;
+      if(currentTurn == "attack" && currentPlayerTurn == "pc")
       {
-        for(let i = this.players[0].playerHand.length; i < 6; i++)
+        for(let i = pcPlayerHandLength; i < 6; i++)
         {
-          if(this.deck.length > 0)
-          {
-            this.players[0].addCard(this.deck.pop());
-          }
+          this.players[0].addCard(this.deck.pop());
+        }
+
+        for(let i = aiPlayerHandLength; i < 6; i++)
+        {
+          this.players[1].addCard(this.deck.pop());
         }
       }
-      if(this.players[1].playerHand.length < 7)
+      else
       {
-        for(let i = this.players[1].playerHand.length; i < 6; i++)
+        for(let i = aiPlayerHandLength; i < 6; i++)
         {
-          if(this.deck.length > 0)
-          {
-            this.players[1].addCard(this.deck.pop());
-          }
+          this.players[1].addCard(this.deck.pop());
         }
-      }
-    }
 
-    if(currentTurn == "attack" && currentPlayerTurn == "ai")
-    {
-      if(this.players[1].playerHand.length < 7)
-      {
-        for(let i = this.players[1].playerHand.length; i < 6; i++)
+        for(let i = pcPlayerHandLength; i < 6; i++)
         {
-          if(this.deck.lenght > 0)
-          {
-            this.players[1].addCard(this.deck.pop());
-          }
-        }
-      }
-
-      if(this.players[0].playerHand.length < 7)
-      {
-        for(let i = this.players[0].playerHand.length; i < 6; i++)
-        {
-          if(this.deck.lenght > 0)
-          {
-            this.players[0].addCard(this.deck.pop());
-          }
+          this.players[0].addCard(this.deck.pop());
         }
       }
     }
@@ -1162,7 +1236,10 @@ class Game
     }
     if(currentTurn == "attack" && currentPlayerTurn == "ai")
     {
+      if(this.checkDefendMove(cardObjCopy))
+      {
 
+      }
     }
   }
 
@@ -1208,13 +1285,13 @@ class Game
   //calls player to take all cards on table
   playerTakeCards()
   {
-    let allCardsOnTable = [...this.board.onTableAttack, ...this.board.onTableDefense];
-    for(let i = 0; i < allCardsOnTable.length; i++)
+    let cardsToTakeOnTable = [...this.board.onTableAttack, ...this.board.onTableDefense];
+    for(let i = 0; i < cardsToTakeOnTable.length; i++)
     {
-      allCardsOnTable[i]["rendered"] = false;
-      this.players[0].addCard(allCards[i]);
+      cardsToTakeOnTable[i]["rendered"] = false;
+      this.players[0].addCard(cardsToTakeOnTable[i]);
     }
-    this.board.resetTable()
+    this.board.resetTable();
   }
   //finishes the round for the human player if he's attacking
   playerFinishRound()
@@ -1228,6 +1305,14 @@ class Game
     if(this.players[1].canReAttack(this.board.onTableAttack, this.board.onTableDefense))
     {
       let card = this.players[1].getAttackCard(this.board.onTableAttack, this.board.onTableDefense);
+      this.board.setAttackCardToTable(card);
+    }
+    else
+    {
+      if(this.board.onTableAttack.length == this.board.onTableDefense.length)
+      {
+
+      }
     }
   }
   //starts the game
