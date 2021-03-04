@@ -699,8 +699,16 @@ class AiPlayer
       }
     });
 
+    if(opponetCardField.children.length > 1)
+    {
+      opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
+    }
+    else
+    {
+      opponetCardField.removeChild(opponetCardField.childNodes[indexDom]);
+    }
+
     this.playerHand = newPlayerHand;
-    opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
     return resultObj;
   }
 
@@ -797,13 +805,21 @@ class AiPlayer
     }
 
     let newPlayerHand = this.playerHand.filter((card) => {
-      if(card["DomID"] != domIDSearchStr)
+      if(card["DomID"] != obj["DomID"])
       {
         return card;
       }
     });
 
-    opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
+    if(opponetCardField.children.length > 1)
+    {
+        opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
+    }
+    else
+    {
+      opponetCardField.removeChild(opponetCardField.childNodes[indexDom]);
+    }
+
     this.playerHand = newPlayerHand;
     return obj;
 
@@ -1151,17 +1167,15 @@ class Game
 
   checkDeckDomRender()
   {
-    if(this.deck.length == 1)
+    if(this.deck.length <= 1)
     {
       deckCoverCard.setAttribute("id", "");
+      deckCoverCard.style.visibility = "hidden";
     }
-    else if(this.deck.length == 0)
+    if(this.deck.length == 0)
     {
       document.getElementsByClassName('jokerSuitCardCover')[0].setAttribute("id", "");
-    }
-    else
-    {
-      return;
+      document.getElementsByClassName('jokerSuitCardCover')[0].style.visibility = "hidden";
     }
   }
 
@@ -1316,7 +1330,7 @@ class Game
     if(this.board.attackDefenseCheck['position2'] == false && this.board.onTableAttack[2])
     {
       this.board.setDefendCardToTable(copyObj);
-      this.board.attackDefenseCheck['positio2'] = true;
+      this.board.attackDefenseCheck['position2'] = true;
     }
     if(this.board.attackDefenseCheck['position3'] == false && this.board.onTableAttack[3])
     {
@@ -1338,12 +1352,42 @@ class Game
   //lays an overlay over the page/ table container and makes the page beneath unclickable , stopping the game and shownig winner
   showWinnerOverlay(str)
   {
-    console.log( str + "WON");
+    let resultOverlay = document.createElement('div');
+    resultOverlay.setAttribute("id", "resultOverlay");
   }
   //checks winner and if there is a winner call showWinnerOverlay() Method
   checkWinner()
   {
-    console.log("Hello World");
+    let currentTurn = this.getTurnInfos();
+    let currentPlayerTurn = this.getPlayerTurnInfos();
+    let deckLength = this.deck.length;
+
+    if(deckLength == 0)
+    {
+      if(currentTurn == "attack" && currentPlayerTurn == "pc")
+      {
+        if(this.players[0].playerHand.length == 0)
+        {
+          this.showWinnerOverlay("you");
+        }
+        else if(this.players[1].playerHand.length == 0)
+        {
+          this.showWinnerOverlay('dumb ai');
+        }
+      }
+      else
+      {
+        if(this.players[1].playerHand.length == 0)
+        {
+          this.showWinnerOverlay('dumb ai');
+        }
+        else if(this.players[0].playerHand.length == 0)
+        {
+          this.showWinnerOverlay('you');
+        }
+      }
+    }
+
   }
   //playerMove Method for clicking the DOM CARDS
   playerMove(e)
@@ -1370,6 +1414,7 @@ class Game
       if(this.checkDefendMove(cardObjCopy))
       {
         let card = this.players[0].getCard(cardIndex, cardObjCopy["DomID"]);
+        card["rendered"] = false;
         this.defendAttack(card);
         this.aiAttackMove();
       }
@@ -1453,8 +1498,11 @@ class Game
 
     if(this.players[1].canReAttack(arrayTable))
     {
-      let card = this.players[1].getAttackCard(arrayTable);
-      this.board.setAttackCardToTable(card);
+      if(this.board.checkAttackCounter())
+      {
+        let card = this.players[1].getAttackCard(arrayTable);
+        this.board.setAttackCardToTable(card);
+      }
     }
     else
     {
