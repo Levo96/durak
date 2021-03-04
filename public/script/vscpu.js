@@ -1358,7 +1358,7 @@ class Game
     let h1 = document.createElement('h1');
     h1.setAttribute("id", "resultTitle");
 
-    h1.innerHTML = str + "won";
+    h1.innerHTML = str + " won";
 
     let restartButton = document.createElement('button');
     restartButton.innerHTML = "restart";

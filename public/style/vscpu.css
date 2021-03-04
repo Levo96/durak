@@ -472,11 +472,11 @@ a
 
 #resultTitle
 {
-  font-size: 3em;
+  font-size: 4em;
   margin-left: 10px;
   margin-right: 10px;
   font-family: 'Fredoka One', cursive;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   font-weight: "bold";
   color: #bcfb83;
   text-transform: uppercase;
@@ -484,15 +484,20 @@ a
 
 .resultOverlayBtns
 {
-  height: 200px;
-  width: 200px;
-  padding: 10px;
-  color: black;
+  margin: 25px 0;
+  width: 250px;
+  height: 4rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   background-color: #f98d8a;
-  border: 1px solid #bcfb83;
+  border: 2px solid #f98d8a;
+  font-family: 'Fredoka One', cursive;
   font-weight:bold;
   cursor: pointer;
   text-decoration: none;
+  color: black;
+  padding-top: 0.9em;
+  padding-bottom: 0.8em;
+  padding-left: 5.4em;
+  padding-right: 5.4em;
 }
