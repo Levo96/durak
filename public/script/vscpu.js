@@ -699,15 +699,7 @@ class AiPlayer
       }
     });
 
-    if(opponetCardField.children.length > 1)
-    {
-      opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
-    }
-    else
-    {
-      opponetCardField.removeChild(opponetCardField.childNodes[indexDom]);
-    }
-
+    opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
     this.playerHand = newPlayerHand;
     return resultObj;
   }
@@ -811,15 +803,7 @@ class AiPlayer
       }
     });
 
-    if(opponetCardField.children.length > 1)
-    {
-        opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
-    }
-    else
-    {
-      opponetCardField.removeChild(opponetCardField.childNodes[indexDom]);
-    }
-
+    opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
     this.playerHand = newPlayerHand;
     return obj;
 

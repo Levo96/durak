@@ -53,7 +53,86 @@ a
 {
   height: 10%;
   width: 100%;
+  display: flex;
 }
+
+#vsCpuHeader div
+{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---- vsCpuHeader --- */
+
+#exitRoomBtnContainer
+{
+  width: 10%;
+}
+
+#vsCpuHeaderExitBtn
+{
+  background-color: #f98d8a;
+  border: 2px solid #f98d8a;
+  color: black;
+  height: 50%;
+  width: 60%;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Fredoka One', cursive;
+  letter-spacing: 2px;
+}
+
+#vsCpuHeaderExitBtn:hover
+{
+  border-color: #bcfb83;
+}
+
+#roomPlayerCountContainer
+{
+  width: 20%;
+}
+
+#roomPlayerCount
+{
+  font-family: 'Fredoka One', cursive;
+  font-size: 2em;
+  letter-spacing: 1px;
+  color: white;
+}
+
+#roomTitle
+{
+  font-family: 'Fredoka One', cursive;
+  font-size: 3em;
+  letter-spacing: 2px;
+  color: #bcfb83;
+}
+
+#roomTitleContainer
+{
+  width: 70%;
+}
+
+#roomChatContainer
+{
+  width: 30%;
+}
+
+#roomChatOpener
+{
+  font-size: 1.6em;
+  font-family: 'Fredoka One', cursive;
+  color: darkgrey;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+/* -------------------- */
 
 #vsCpuTable
 {
@@ -122,17 +201,22 @@ a
 
 #finishBtnContainer button,#drawBtnContainer button
 {
-  height: 90%;
+  height: 80%;
   width: 60%;
   color: black;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   background-color: #f98d8a;
-  border: 1px solid #f98d8a;
+  border: 2px solid black;
   font-weight:bold;
   cursor: pointer;
+  border-radius: 25px;
 }
 
+#finishBtnContainer button:hover,#drawBtnContainer button:hover
+{
+  border-color: #bcfb83;
+}
 
 /* ------------- Table Middle Containers ----------------- */
 #TableLeftSide
@@ -467,7 +551,7 @@ a
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
 }
 
 #resultTitle
@@ -485,8 +569,8 @@ a
 .resultOverlayBtns
 {
   margin: 25px 0;
-  width: 250px;
-  height: 4rem;
+  width: 200px;
+  height: 3rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   background-color: #f98d8a;
@@ -496,8 +580,12 @@ a
   cursor: pointer;
   text-decoration: none;
   color: black;
-  padding-top: 0.9em;
-  padding-bottom: 0.8em;
-  padding-left: 5.4em;
-  padding-right: 5.4em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resultOverlayBtns:hover
+{
+  border-color: #bcfb83;
 }
