@@ -1354,6 +1354,33 @@ class Game
   {
     let resultOverlay = document.createElement('div');
     resultOverlay.setAttribute("id", "resultOverlay");
+
+    let h1 = document.createElement('h1');
+    h1.setAttribute("id", "resultTitle");
+
+    h1.innerHTML = str + "won";
+
+    let restartButton = document.createElement('button');
+    restartButton.innerHTML = "restart";
+    restartButton.addEventListener('click', function restartGame(){
+      resultOverlay.style.display = "none";
+      location.reload();
+    });
+
+    let exitButton = document.createElement('a');
+    exitButton.setAttribute('href', "/");
+    exitButton.innerHTML = "exit";
+
+    restartButton.classList.add('resultOverlayBtns')
+    exitButton.classList.add('resultOverlayBtns');
+
+    $(resultOverlay).append(h1);
+    $(resultOverlay).append(restartButton);
+    $(resultOverlay).append(exitButton);
+
+    resultOverlay.style.display = "flex";
+
+    $('#vsCpuPageContainer').append(resultOverlay);
   }
   //checks winner and if there is a winner call showWinnerOverlay() Method
   checkWinner()
@@ -1404,9 +1431,7 @@ class Game
         this.board.setAttackCardToTable(card);
         this.checkWinner();
         this.aiDefendMove();
-        console.log("---| in the playerMove function |----");
-        console.log(this.board.onTableAttack);
-        console.log(this.board.onTableDefense);
+        this.checkWinner();
       }
     }
     if(currentTurn == "attack" && currentPlayerTurn == "ai")
@@ -1416,7 +1441,9 @@ class Game
         let card = this.players[0].getCard(cardIndex, cardObjCopy["DomID"]);
         card["rendered"] = false;
         this.defendAttack(card);
+        this.checkWinner();
         this.aiAttackMove();
+        this.checkWinner();
       }
     }
   }
@@ -1540,6 +1567,7 @@ finishBtn.addEventListener('click', () => {
       game.toggleTurnToAi();
       game.startRound();
       game.aiAttackMove();
+      game.checkWinner();
     }
   }
 });
@@ -1554,5 +1582,6 @@ drawBtn.addEventListener('click', () => {
     game.playerTakeCards();
     game.startRound();
     game.aiAttackMove();
+    game.checkWinner();
   }
 });
