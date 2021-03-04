@@ -615,12 +615,17 @@ class AiPlayer
     return resultObj;
   }
 
-  canReAttack(arr1, arr2)
+  canReAttack(arr1)
   {
-    let allCardsOnTableAttackRound = [...arr1, ...arr2];
+
+    let allCardsOnTableAttackRound = [];
+    console.log(" ---| in the AI canReAttack Method |---");
+    for(let i = 0; i < arr1.length; i++)
+    {
+      allCardsOnTableAttackRound.push(arr1[i]);
+    }
+    console.log(allCardsOnTableAttackRound);
     let canReAttacCheck = false;
-
-
     if(allCardsOnTableAttackRound.length == 0)
     {
       canReAttacCheck = true;
@@ -631,7 +636,7 @@ class AiPlayer
       {
         for(let j = 0; j < this.playerHand.length; j++)
         {
-          if(allCardsOnTableAttackRound[i]["value"] = this.playerHand[j]["value"])
+          if(allCardsOnTableAttackRound[i]["value"] == this.playerHand[j]["value"])
           {
             canReAttacCheck = true;
             break;
@@ -728,9 +733,15 @@ class AiPlayer
     }
   }
 
-  getAttackCard(arr1, arr2)
+  getAttackCard(arr1)
   {
-    let allCardsOnTableAttackRound = [...arr1, ...arr2];
+    let allCardsOnTableAttackRound = [];
+    console.log('--- AI getAttackCard Method ---');
+    for(let i = 0; i < arr1.length; i++)
+    {
+      allCardsOnTableAttackRound.push(arr1[i]);
+    }
+
     let rank = 9;
     let domIDSearchStr = '';
     if(allCardsOnTableAttackRound.length == 0)
@@ -762,11 +773,12 @@ class AiPlayer
     {
       for(let i = 0; i < allCardsOnTableAttackRound.length; i++)
       {
-        for(let j = 0; j < this.playerHand.length; i++)
+        for(let j = 0; j < this.playerHand.length; j++)
         {
-          if(allCardsOnTableAttackRound[i]["value"] == this.playerHand[j]["value"])
+          if(this.playerHand[j]["value"] == allCardsOnTableAttackRound[i]["value"])
           {
-            domIDSearchStr = this.playerHand[j]["domIDSearchStr"];
+            domIDSearchStr = this.playerHand[j]["DomID"];
+            break;
           }
         }
       }
@@ -1007,41 +1019,145 @@ class Game
   {
     let check = false;
     let copyOfCardObj = obj;
+
     if(this.board.attackDefenseCheck['position0'] == false && this.board.onTableAttack[0])
     {
-
+      if(copyOfCardObj["jokerSuit"] == true && this.board.onTableAttack[0]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+      if(copyOfCardObj["joker"] == true && this.board.onTableAttack[0]["jokerSuit"] == true)
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[0]["rank"])
+        {
+          check = true;
+        }
+      }
+      if(copyOfCardObj["suit"] == this.board.onTableAttack[0]["suit"])
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[0]["rank"])
+        {
+          check = true;
+        }
+      }
     }
     if(this.board.attackDefenseCheck['position1'] == false && this.board.onTableAttack[1])
     {
-
+      if(copyOfCardObj["jokerSuit"] == true && this.board.onTableAttack[1]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+      if(copyOfCardObj["joker"] == true && this.board.onTableAttack[1]["jokerSuit"] == true)
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[1]["rank"])
+        {
+          check = true;
+        }
+      }
+      if(copyOfCardObj["suit"] == this.board.onTableAttack[1]["suit"])
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[1]["rank"])
+        {
+          check = true;
+        }
+      }
     }
     if(this.board.attackDefenseCheck['position2'] == false && this.board.onTableAttack[2])
     {
-
+      if(copyOfCardObj["jokerSuit"] == true && this.board.onTableAttack[2]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+      if(copyOfCardObj["joker"] == true && this.board.onTableAttack[2]["jokerSuit"] == true)
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[2]["rank"])
+        {
+          check = true;
+        }
+      }
+      if(copyOfCardObj["suit"] == this.board.onTableAttack[2]["suit"])
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[2]["rank"])
+        {
+          check = true;
+        }
+      }
     }
     if(this.board.attackDefenseCheck['position3'] == false && this.board.onTableAttack[3])
     {
-
+      if(copyOfCardObj["jokerSuit"] == true && this.board.onTableAttack[3]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+      if(copyOfCardObj["joker"] == true && this.board.onTableAttack[3]["jokerSuit"] == true)
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[3]["rank"])
+        {
+          check = true;
+        }
+      }
+      if(copyOfCardObj["suit"] == this.board.onTableAttack[3]["suit"])
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[3]["rank"])
+        {
+          check = true;
+        }
+      }
     }
     if(this.board.attackDefenseCheck['position4'] == false && this.board.onTableAttack[4])
     {
-
+      if(copyOfCardObj["jokerSuit"] == true && this.board.onTableAttack[4]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+      if(copyOfCardObj["joker"] == true && this.board.onTableAttack[4]["jokerSuit"] == true)
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[4]["rank"])
+        {
+          check = true;
+        }
+      }
+      if(copyOfCardObj["suit"] == this.board.onTableAttack[4]["suit"])
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[4]["rank"])
+        {
+          check = true;
+        }
+      }
     }
     if(this.board.attackDefenseCheck['position5'] == false && this.board.onTableAttack[5])
     {
-
+      if(copyOfCardObj["jokerSuit"] == true && this.board.onTableAttack[5]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+      if(copyOfCardObj["joker"] == true && this.board.onTableAttack[5]["jokerSuit"] == true)
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[5]["rank"])
+        {
+          check = true;
+        }
+      }
+      if(copyOfCardObj["suit"] == this.board.onTableAttack[5]["suit"])
+      {
+        if(copyOfCardObj["rank"] > this.board.onTableAttack[5]["rank"])
+        {
+          check = true;
+        }
+      }
     }
+    return check;
   }
 
   checkDeckDomRender()
   {
     if(this.deck.length == 1)
     {
-      deckCoverCard.style.visibility = "hidden";
+      deckCoverCard.setAttribute("id", "");
     }
     else if(this.deck.length == 0)
     {
-      jokerSuitCardCover.style.visibility = "hidden";
+      document.getElementsByClassName('jokerSuitCardCover')[0].setAttribute("id", "");
     }
     else
     {
@@ -1084,6 +1200,7 @@ class Game
         }
       }
     }
+    this.checkDeckDomRender();
   }
   //calls Ai to Defend Move
   aiDefendMove()
@@ -1095,6 +1212,8 @@ class Game
         let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[0]);
         this.board.setDefendCardToTable(defendCard);
         this.board.attackDefenseCheck['position0'] = true;
+        console.log('---| AI DEFEND MOVE METHOD |---');
+        console.log(this.players[1].playerHand);
         this.checkWinner();
       }
       else
@@ -1179,6 +1298,43 @@ class Game
       }
     }
   }
+  //pc player defend attack method to properly defend attacks
+  defendAttack(obj)
+  {
+    let copyObj = obj;
+    copyObj["rendered"] = false;
+    if(this.board.attackDefenseCheck['position0'] == false && this.board.onTableAttack[0])
+    {
+      this.board.setDefendCardToTable(copyObj);
+      this.board.attackDefenseCheck['position0'] = true;
+    }
+    if(this.board.attackDefenseCheck['position1'] == false && this.board.onTableAttack[1])
+    {
+      this.board.setDefendCardToTable(copyObj);
+      this.board.attackDefenseCheck['position1'] = true;
+    }
+    if(this.board.attackDefenseCheck['position2'] == false && this.board.onTableAttack[2])
+    {
+      this.board.setDefendCardToTable(copyObj);
+      this.board.attackDefenseCheck['positio2'] = true;
+    }
+    if(this.board.attackDefenseCheck['position3'] == false && this.board.onTableAttack[3])
+    {
+      this.board.setDefendCardToTable(copyObj);
+      this.board.attackDefenseCheck['position3'] = true;
+    }
+    if(this.board.attackDefenseCheck['position4'] == false && this.board.onTableAttack[4])
+    {
+      this.board.setDefendCardToTable(copyObj);
+      this.board.attackDefenseCheck['position4'] = true;
+    }
+    if(this.board.attackDefenseCheck['position5'] == false && this.board.onTableAttack[5])
+    {
+      this.board.setDefendCardToTable(copy);
+      this.board.attackDefenseCheck['position5'] = true;
+    }
+  }
+
   //lays an overlay over the page/ table container and makes the page beneath unclickable , stopping the game and shownig winner
   showWinnerOverlay(str)
   {
@@ -1187,35 +1343,7 @@ class Game
   //checks winner and if there is a winner call showWinnerOverlay() Method
   checkWinner()
   {
-    if(this.deck.length == 0)
-    {
-      let checkTurn = this.getTurnInfos();
-      let playerTurn = this.getPlayerTurnInfos();
-
-      if(checkTurn == "attack" && playerTurn == "pc")
-      {
-        if(this.players[0].playerHand.length == 0)
-        {
-          this.showWinnerOverlay('you');
-        }
-        else if(this.players[1].playerHand.length == 0)
-        {
-          this.showWinnerOverlay('dumb ai');
-        }
-      }
-
-      if(checkTurn == "attack" && playerTurn == "ai")
-      {
-        if(this.players[1].playerHand.length == 0)
-        {
-          this.showWinnerOverlay('dumb ai');
-        }
-        else if(this.players[0].playerHand.lenght == 0)
-        {
-          this.showWinnerOverlay('you');
-        }
-      }
-    }
+    console.log("Hello World");
   }
   //playerMove Method for clicking the DOM CARDS
   playerMove(e)
@@ -1232,13 +1360,18 @@ class Game
         this.board.setAttackCardToTable(card);
         this.checkWinner();
         this.aiDefendMove();
+        console.log("---| in the playerMove function |----");
+        console.log(this.board.onTableAttack);
+        console.log(this.board.onTableDefense);
       }
     }
     if(currentTurn == "attack" && currentPlayerTurn == "ai")
     {
       if(this.checkDefendMove(cardObjCopy))
       {
-
+        let card = this.players[0].getCard(cardIndex, cardObjCopy["DomID"]);
+        this.defendAttack(card);
+        this.aiAttackMove();
       }
     }
   }
@@ -1302,16 +1435,34 @@ class Game
   //calls ai to make a attackMove
   aiAttackMove()
   {
-    if(this.players[1].canReAttack(this.board.onTableAttack, this.board.onTableDefense))
+    let arrayTable = [];
+
+    for(let i = 0; i < this.board.onTableAttack.length; i++)
     {
-      let card = this.players[1].getAttackCard(this.board.onTableAttack, this.board.onTableDefense);
+      let tmpObj = Object.assign({}, this.board.onTableAttack[i]);
+      tmpObj["rendered"] = false;
+      arrayTable.push(tmpObj);
+    }
+
+    for(let i = 0; i < this.board.onTableDefense.length; i++)
+    {
+      let tmpObj = Object.assign({}, this.board.onTableDefense[i]);
+      tmpObj["rendered"] = false;
+      arrayTable.push(tmpObj);
+    }
+
+    if(this.players[1].canReAttack(arrayTable))
+    {
+      let card = this.players[1].getAttackCard(arrayTable);
       this.board.setAttackCardToTable(card);
     }
     else
     {
       if(this.board.onTableAttack.length == this.board.onTableDefense.length)
       {
-
+        this.playerFinishRound();
+        this.toggleTurnToPc();
+        this.startRound();
       }
     }
   }
@@ -1323,11 +1474,11 @@ class Game
   }
 }
 
-
+//GAME
 let game = new Game();
 game.startGame();
 
-
+//if cant attack/reattack anymore you have to finish the round
 finishBtn.addEventListener('click', () => {
   let turn = game.getTurnInfos();
   let playerTurn = game.getPlayerTurnInfos();
@@ -1345,7 +1496,7 @@ finishBtn.addEventListener('click', () => {
   }
 });
 
-
+//draw btn : in case of no defend you have to take the cards of the table
 drawBtn.addEventListener('click', () => {
   let turn = game.getTurnInfos();
   let playerTurn = game.getPlayerTurnInfos();
