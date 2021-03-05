@@ -623,7 +623,7 @@ class AiPlayer
     {
       allCardsOnTableAttackRound.push(arr1[i]);
     }
-    
+
     let canReAttacCheck = false;
     if(allCardsOnTableAttackRound.length == 0)
     {
@@ -1324,7 +1324,7 @@ class Game
     }
     if(this.board.attackDefenseCheck['position5'] == false && this.board.onTableAttack[5])
     {
-      this.board.setDefendCardToTable(copy);
+      this.board.setDefendCardToTable(copyObj);
       this.board.attackDefenseCheck['position5'] = true;
     }
   }
