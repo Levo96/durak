@@ -555,7 +555,7 @@ class AiPlayer
     }
     return defendBool;
   }
-
+  //finds min jokerSuit Card
   findMinJokerSuitCard(obj)
   {
     let arrayOfJokerSuitsCards = [];
@@ -614,17 +614,16 @@ class AiPlayer
     opponetCardField.removeChild(opponetCardField.childNodes[indexDom + 1]);
     return resultObj;
   }
-
+  //checks if ai can reattack
   canReAttack(arr1)
   {
 
     let allCardsOnTableAttackRound = [];
-    console.log(" ---| in the AI canReAttack Method |---");
     for(let i = 0; i < arr1.length; i++)
     {
       allCardsOnTableAttackRound.push(arr1[i]);
     }
-    console.log(allCardsOnTableAttackRound);
+    
     let canReAttacCheck = false;
     if(allCardsOnTableAttackRound.length == 0)
     {
@@ -646,7 +645,7 @@ class AiPlayer
     }
     return canReAttacCheck;
   }
-
+  //finds the min reg card
   findMinRegCard(obj)
   {
     let arrayOfRegularCards = [];
@@ -719,7 +718,7 @@ class AiPlayer
     }
     return returnCard;
   }
-
+  //checks if any regula cards are left
   anyRegCardsLeft()
   {
     let regCardsCounter = this.regCardsCount();
@@ -732,11 +731,10 @@ class AiPlayer
       return true;
     }
   }
-
+  //gets the attack cards
   getAttackCard(arr1)
   {
     let allCardsOnTableAttackRound = [];
-    console.log('--- AI getAttackCard Method ---');
     for(let i = 0; i < arr1.length; i++)
     {
       allCardsOnTableAttackRound.push(arr1[i]);
@@ -1014,7 +1012,7 @@ class Game
       }
     }
   }
-
+  //cheks if players defend move is legit
   checkDefendMove(obj)
   {
     let check = false;
@@ -1148,7 +1146,7 @@ class Game
     }
     return check;
   }
-
+  //cheks if the deck is zero the removes it
   checkDeckDomRender()
   {
     if(this.deck.length <= 1)
@@ -1210,8 +1208,6 @@ class Game
         let defendCard = this.players[1].getDefendCard(this.board.onTableAttack[0]);
         this.board.setDefendCardToTable(defendCard);
         this.board.attackDefenseCheck['position0'] = true;
-        console.log('---| AI DEFEND MOVE METHOD |---');
-        console.log(this.players[1].playerHand);
         this.checkWinner();
       }
       else
