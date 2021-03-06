@@ -1,5 +1,6 @@
 /* ------------------ GAME --------------------- */
-let socket = io("/");
+let roomLog = {};
+let socket = io();
 /* ----------- DOM  ELEMENTS --------------------------------------------*/
 
 /* --------------- HOMEPAGE -------------------------------- */
@@ -86,22 +87,26 @@ $(joinRoomBackBtn).on('click',()=> {
 /* ---------------------------------- */
 $(openChatBox).on('click', () => {
   $(chatBox).css('display', "flex");
+
 });
 
 $(closeChatBoxBtn).on('click', () => {
   $(chatBox).css('display', 'none');
+  $(openChatBox).css('color', 'darkgrey');
 });
 
 /*--------------------------------------*/
 /* ----- Sending roomInput --------- */
 
 $(createRoomBtn).on('click', ()=> {
-  socket.emit('createRoom', $(createRoomInput).val());
+  let inputValue = $(createRoomInput).val();
+  socket.emit('createRoom', {roomName: inputValue});
   $(createRoomInput).val("");
 });
 
 $(joinRoomBtn).on('click', ()=> {
-  socket.emit('enterRoom', $(joinRoomInput).val());
+  let inputValue = $(joinRoomInput).val();
+  socket.emit('enterRoom', {roomName: inputValue});
   $(joinRoomInput).val("");
 });
 
@@ -111,17 +116,47 @@ socket.on('roomName already in use', () => {
   alert("room name already in use");
 });
 
-socket.on("")
+socket.on('room not found', ()=> {
+  alert("room not found");
+});
+
+socket.on('room empty', ()=> {
+  alert('room empty');
+});
+
+socket.on('room is full', ()=> {
+  alert('room is full');
+});
+
+/* -------------------------------Sending Message ---------------------------------*/
+$(sendMessageBtn).on('click', ()=> {
+  if($('#messageInput').val() == "") {return;};
+  let message = $('#messageInput').val();
+  socket.emit("handleMessage", {roomName: roomLog["roomName"], messageString: message});
+  $('#messageInput').val("");
+});
+
+socket.on('newMessage', (data)=> {
+  $(openChatBox).css('color', '#bcfb83');
+  $('#chatBox').append('<p> ' + data["message"] + '</p>');
+  $('#messageInput').val("");
+});
+
+
 
 /*----------------Redirect to Table and Chat ------------------- */
 socket.on('userJoinedRoom', (data) => {
-  console.log(data);
+  showGameRoom();
+  roomLog["roomName"] = data["name"];
+  roomLog["roomInfo"] = data["roomInfo"];
+  $('#roomTitle').text('Room: ' + data["name"]);
+  $('#roomPlayerCount').text('Players: '+ data["roomInfo"]["socketIDs"].length);
 });
 
 
 
 
-/* -----------------------------------------------------------------*/
+/* --------------------------- GAME ----------------------------*/
 
 
 

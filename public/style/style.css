@@ -796,8 +796,9 @@ a
   height: 80%;
   background-color: white;
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
+  justify-content: flex-end;
+  align-items: center;
+  flex-direction: column;
   word-wrap: break-word;
   padding: 5px;
   overflow: auto;
@@ -805,7 +806,9 @@ a
 
 #chatBox p
 {
+  margin-top: 2px;
   color: #1c1d3a;
+  margin-bottom: 2px;
 }
 
 #chatBoxSendContainer

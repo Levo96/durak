@@ -20,25 +20,64 @@ app.route('/').get((req, res) => {
 
 let roomLog = {};
 
-let room =
-{
-  socketIDs: []
-}
 /* ------------------------------------------------------------------------------*/
 
 io.on('connection', socket => {
 
   //enter a room
   socket.on('createRoom', (data) => {
-    
+    let roomName = data["roomName"];
+    if(roomLog[roomName])
+    {
+      socket.emit("roomName already in use");
+      return;
+    }
+    roomLog[roomName] = {deck: [], player1Hand: [], player2Hand: [], socketIDs:[]};
+    roomLog[roomName]["socketIDs"].push(socket.id);
+    socket.join(roomName);
+    io.in(roomName).emit("userJoinedRoom", {name: roomName, roomInfo: roomLog[roomName]});
   });
 
   socket.on('enterRoom', (data) => {
+
+    let roomObj = io.sockets.adapter.rooms.get(data["roomName"]);
+    let socketClients = io.sockets.adapter.rooms.get(data["roomName"]).size;
+    let roomName = data["roomName"];
+
+
+    if(roomObj)
+    {
+        if(socketClients == 0)
+        {
+          socket.emit('room empty');
+          return;
+        }
+        else if(socketClients >= 2)
+        {
+          socket.emit('room full');
+          return;
+        }
+        else
+        {
+          roomLog[roomName]["socketIDs"].push(socket.id);
+          socket.join(roomName);
+          io.in(roomName).emit('userJoinedRoom', {name: roomName, roomInfo: roomLog[roomName]});
+        }
+    }
+    else
+    {
+      socket.emit('room not found');
+      return;
+    }
+
   });
 
-
   //send message in a room
-
+  socket.on('handleMessage', (data)=> {
+    let roomName = data["roomName"];
+    let newMessage = data["messageString"];
+    io.in(data["roomName"]).emit('newMessage', {message: newMessage});
+  });
 
   //leave room
 
