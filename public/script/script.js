@@ -1,11 +1,11 @@
 /* ------------------ GAME --------------------- */
-
-
-/* ----------- DOM  ELEMENTS ------------*/
+let socket = io("/");
+/* ----------- DOM  ELEMENTS --------------------------------------------*/
 
 /* --------------- HOMEPAGE -------------------------------- */
 
 /*--------Containers ------------*/
+let homePageContainer = document.getElementById('homePageContainer');
 let gameOptionContainer = document.getElementById('OptionButtonContainer');
 let createRoomContainer = document.getElementById('createRoomContainer');
 let joinRoomContainer = document.getElementById('joinRoomContainer');
@@ -23,6 +23,7 @@ let createRoomInput = document.getElementById('createRoomInput');
 let joinRoomInput = document.getElementById('joinRoomInput');
 
 /* ----------HOMEPAGE BASIC NAVIGATION FUNCTIONS ------------- */
+
 let hideCreateAndJoinRoomContainer = () =>
 {
   $(createRoomContainer).hide();
@@ -57,6 +58,12 @@ let showJoinRoomContainer = () =>
   $(joinRoomContainer).fadeIn();
 }
 
+let showGameRoom = () =>
+{
+  $(homePageContainer).hide();
+  $(roomContainer).fadeIn();
+}
+
 $(toCreateRoomBtn).on('click', ()=> {
   showCreateRoomContainer();
 });
@@ -73,6 +80,12 @@ $(joinRoomBackBtn).on('click',()=> {
   hideJoinRoomContainer();
 });
 
+/* ----- Sending roomInput --------- */
+
+$(createRoomBtn).on('click', ()=> {
+  socket.emit('createRoom', $(createRoomInput).val());
+  $(createRoomInput).val("");
+});
 
 
 
@@ -82,15 +95,19 @@ $(joinRoomBackBtn).on('click',()=> {
 
 
 
+/*----------------Redirect to Table and Chat ------------------- */
+socket.on('userJoinedRoom', (data) => {
+  showGameRoom();
+  $('#roomTitle').text("");
+  $('#roomPlayerCount').text("");
+  $('#roomTitle').text('Room: ' + data["name"]);
+  $('#roomPlayerCount').text('Players: ' + data["playerCount"]);
+});
 
 
 
 
-
-
-
-
-
+/* -----------------------------------------------------------------*/
 
 
 
