@@ -18,54 +18,24 @@ app.route('/').get((req, res) => {
 });
 /* --------------------------------------------------------------------------- */
 
-let rooms = [];
-let roomLog = {
-  "name": '',
-  "playerCount": 0,
-  "socketIDs": []
-};
+let roomLog = {};
 
-let checkIfRoomExists = (roomNameStr) =>
+let room =
 {
-  let check = false;
-  if(rooms.length == 0)
-  {
-    check = false;
-  }
-  else
-  {
-    for(let i = 0; i < rooms.length; i++)
-    {
-      if(rooms[i][roomNameStr])
-      {
-        check = true;
-      }
-    }
-  }
-  return check;
+  socketIDs: []
 }
-
 /* ------------------------------------------------------------------------------*/
 
 io.on('connection', socket => {
 
   //enter a room
   socket.on('createRoom', (data) => {
-
-    if(checkIfRoomExists(data))
-    {
-      console.log("does exist");
-      return;
-    }
-
-    roomLog["name"] = data;
-    roomLog["playerCount"] += 1;
-    roomLog["socketIDs"].push(socket.id);
-    rooms.push(roomLog);
-
-    socket.join(roomLog["name"]);
-    io.in(roomLog["name"]).emit("userJoinedRoom", roomLog);
+    
   });
+
+  socket.on('enterRoom', (data) => {
+  });
+
 
   //send message in a room
 

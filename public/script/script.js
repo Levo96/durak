@@ -21,7 +21,10 @@ let joinRoomBackBtn = document.getElementById('joinRoomBackBtn');
 /* -------------------INPUTS --------------------------*/
 let createRoomInput = document.getElementById('createRoomInput');
 let joinRoomInput = document.getElementById('joinRoomInput');
-
+let openChatBox = document.getElementById('roomChatOpener');
+let chatBox = document.getElementById('chatBoxContainer');
+let sendMessageBtn = document.getElementById('sendMessageBtn');
+let closeChatBoxBtn = document.getElementById('closeChatBoxBtn');
 /* ----------HOMEPAGE BASIC NAVIGATION FUNCTIONS ------------- */
 
 let hideCreateAndJoinRoomContainer = () =>
@@ -80,6 +83,16 @@ $(joinRoomBackBtn).on('click',()=> {
   hideJoinRoomContainer();
 });
 
+/* ---------------------------------- */
+$(openChatBox).on('click', () => {
+  $(chatBox).css('display', "flex");
+});
+
+$(closeChatBoxBtn).on('click', () => {
+  $(chatBox).css('display', 'none');
+});
+
+/*--------------------------------------*/
 /* ----- Sending roomInput --------- */
 
 $(createRoomBtn).on('click', ()=> {
@@ -87,21 +100,22 @@ $(createRoomBtn).on('click', ()=> {
   $(createRoomInput).val("");
 });
 
+$(joinRoomBtn).on('click', ()=> {
+  socket.emit('enterRoom', $(joinRoomInput).val());
+  $(joinRoomInput).val("");
+});
 
+/* ---------------------- -errors and log messages---------------------------*/
 
+socket.on('roomName already in use', () => {
+  alert("room name already in use");
+});
 
-
-
-
-
+socket.on("")
 
 /*----------------Redirect to Table and Chat ------------------- */
 socket.on('userJoinedRoom', (data) => {
-  showGameRoom();
-  $('#roomTitle').text("");
-  $('#roomPlayerCount').text("");
-  $('#roomTitle').text('Room: ' + data["name"]);
-  $('#roomPlayerCount').text('Players: ' + data["playerCount"]);
+  console.log(data);
 });
 
 
