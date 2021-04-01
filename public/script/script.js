@@ -1,12 +1,16 @@
 /* ------------------ GAME --------------------- */
-let roomLog = {};
+let roomName = '';
 let socket = io();
 let mySocketID;
 let myHand = [];
-let opponentHand = [];
+let opponentHand = 0;
 let deck = [];
 let myTurn = '';
 let whichPlayerAmI = '';
+let onTableAttack = [];
+let onTableDefense = [];
+let playerTurn = '';
+let attackCounter = 0;
 
 /* ----------- DOM  ELEMENTS --------------------------------------------*/
 
@@ -64,9 +68,52 @@ let defendPosition5 = document.getElementById('defendPosition5');
 let finishBtn = document.getElementById('finishBtn');
 let drawBtn = document.getElementById('drawBtn');
 
-//----------------------functions ----------------------
+//----------------------functions -------------------------------
 
-let findElementIndexById = (idStr) =>
+const renderOnTableAttack = (arr) =>
+{
+  let oldOnTableAttack = [...onTableAttack];
+  onTableAttack = [...arr];
+
+  for(let i = 0; i < oldOnTableAttack.length; i++)
+  {
+    for(let j = 0; j < onTableAttack.length; j++)
+    {
+      if(oldOnTableAttack[i]["DomID"] == onTableAttack[j]["DomID"])
+      {
+        if(oldOnTableAttack[i]["rendered"])
+        {
+          onTableAttack[j]["rendered"] = true;
+        }
+      }
+    }
+  }
+
+  for(let i = 0; i < onTableAttack.length; i++)
+  {
+    if(onTableAttack[i]["rendered"] == false)
+    {
+      let cardDiv = document.createElement('div');
+      cardDiv.classList.add("card");
+      cardDiv.setAttribute("id", onTableAttack[i]["DomID"]);
+      cardDiv.setAttribute("dataID",onTableAttack[i]["DomID"]);
+      onTableAttack[i]["rendered"] = true;
+      switch (i) {
+        case 0:$(attackPosition0).append(cardDiv);break;
+        case 1: $(attackPosition1).append(cardDiv); break;
+        case 2: $(attackPosition2).append(cardDiv); break;
+        case 3: $(attackPosition3).append(cardDiv); break;
+        case 4: $(attackPosition4).append(cardDiv); break;
+        case 5: $(attackPosition5).append(cardDiv); break;
+        default:
+      }
+    }
+    continue;
+  }
+
+}
+
+const findCardObjIndexByID = (idStr) =>
 {
   let id = idStr;
   let index = 0;
@@ -82,21 +129,22 @@ let findElementIndexById = (idStr) =>
   return index;
 }
 
-let checkAttackMove = (obj) =>
+const checkAttack = (obj) =>
 {
+  let allCardsOnTable = [...onTableAttack, ...onTableDefense];
   let check = false;
+  let checkObj = obj;
 
-  if(roomLog["roomInfo"]["onTableAttack"].length == 0)
+
+  if(allCardsOnTable.length == 0)
   {
     check = true;
   }
   else
   {
-    let allCardsOnTable = [...roomLog["roomInfo"]["onTableAttack"], ...roomLog["roomInfo"]["onTableDefense"]];
-
     for(let i = 0; i < allCardsOnTable.length; i++)
     {
-      if(obj["value"] == allCardsOnTable[i]["value"])
+      if(checkObj["value"] == allCardsOnTable[i]["value"])
       {
         check = true;
         break;
@@ -106,52 +154,86 @@ let checkAttackMove = (obj) =>
   return check;
 }
 
-let playerMove = (e) =>
+const checkAttackCounter = () =>
+{
+  if(attackCounter < 7)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+const playerMove  = (e) =>
 {
   let element = e.target;
-  let elementID = element.getAttribute('dataID');
-  let cardIndex = findElementIndexById(elementID);
-  let card = myHand[cardIndex];
-  if(myTurn == "attack")
+  let elementID = element.getAttribute("dataID");
+  let cardIndex = findCardObjIndexByID(elementID);
+  let cardObj = myHand[cardIndex];
+  if(myTurn == "ATTACK")
   {
-    if(checkAttackMove(card))
+
+    if(checkAttack(cardObj) && checkAttackCounter())
     {
-      //socket.emit('playerMove', {roomName: roomLog["roomName"], player: whichPlayerAmI, turn: myTurn, cardID: elementID});
+      socket.emit('attackMove', {roomName: roomName, cardIndex: cardIndex, player: whichPlayerAmI});
+      propponentCardField.removeChild(propponentCardField.childNodes[cardIndex+1]);
     }
   }
   else
   {
+    
+  }
+}
 
+const renderMyHand = (arr) =>
+{
+
+  let oldMyHand = [...myHand];
+  myHand = [...arr];
+
+  for(let i = 0; i < oldMyHand.length; i++)
+  {
+    for(let j = 0; j < myHand.length; j++)
+    {
+      if(oldMyHand[i]["DomID"] == myHand[j]["DomID"])
+      {
+        if(oldMyHand[i]["rendered"])
+        {
+          myHand[j]["rendered"] = true;
+        }
+      }
+    }
+  }
+
+  for(let i = 0; i < myHand.length; i++)
+  {
+    if(myHand[i]["rendered"] == false)
+    {
+      let cardDiv = document.createElement("div");
+      cardDiv.classList.add('card');
+      cardDiv.classList.add('myCardHover');
+      cardDiv.setAttribute("id", myHand[i]["DomID"]);
+      cardDiv.setAttribute("dataID", myHand[i]["DomID"]);
+      cardDiv.addEventListener('click', function cardEvent(e){playerMove(e)});
+      $(propponentCardField).append(cardDiv);
+      myHand[i]["rendered"] = true;
+    }
   }
 }
 
 
-let renderMyCards = (obj) =>
+const renderOpponentHand = (handlength) =>
 {
-  if(obj["rendered"] == false)
+  let len = handlength;
+  $(opponentHand).empty();
+  for(let i = 0; i < len; i++)
   {
     let cardDiv = document.createElement('div');
-    cardDiv.classList.add("card");
-    cardDiv.classList.add("myCardHover");
-    cardDiv.setAttribute("id", obj["DomID"]);
-    cardDiv.setAttribute("dataID", obj["DomID"]);
-    cardDiv.addEventListener('click', function Move(e){playerMove(e)});
-    $(propponentCardField).append(cardDiv);
-    obj["rendered"] = true;
-  }
-
-}
-
-let renderOpponentCards = (obj) =>
-{
-  if(obj["rendered"] == false)
-  {
-    let cardDiv = document.createElement('div');
-    cardDiv.classList.add("card");
     cardDiv.classList.add("oponentCard");
+    cardDiv.classList.add("card");
     $(opponetCardField).append(cardDiv);
-    cardDiv["rendered"] = false;
-    obj["rendered"] = true;
   }
 }
 
@@ -281,103 +363,85 @@ socket.on('newMessage', (data)=> {
 socket.on('userJoinedRoom', (data) => {
   showGameRoom();
   socket.emit('getSocketID');
-  roomLog["roomName"] = data["name"];
-  roomLog["roomInfo"] = data["roomInfo"];
   $('#roomTitle').text('Room: ' + data["name"]);
   $('#roomPlayerCount').text('Players: '+ data["roomInfo"]["socketIDs"].length);
 });
 
 socket.on('recieveSocketID', (data)=> {
   mySocketID = data["socketID"];
-  if(mySocketID == roomLog["roomInfo"]["player1"])
-  {
-    whichPlayerAmI = 'player1';
-  }
-  else
-  {
-    whichPlayerAmI = 'player2';
-  }
 });
 
 /* --------------------------- GAME ----------------------------*/
-socket.on('loadingGameAssets', (data)=> {
-  roomLog["roomName"] = data["name"];
-  roomLog["roomInfo"] = data["roomInfo"];
-  deck = [...data["roomInfo"]["deck"]];
+
+socket.on("loadingGameAssets", (data) => {
+  roomName = data["name"];
 
   let jokerSuitCardCover = document.createElement('div');
   jokerSuitCardCover.classList.add('card');
   jokerSuitCardCover.classList.add('jokerSuitCardCover');
-  jokerSuitCardCover.setAttribute("id", deck[0]["DomID"]);
+  jokerSuitCardCover.setAttribute("id", data["roomInfo"]["deck"][0]["DomID"]);
   $(lastCardPosition).append(jokerSuitCardCover);
 
-  socket.emit('readyForInitGame', {roomName: roomLog["roomName"]});
+  socket.emit('readyForInitGame', {roomName: roomName});
+
 });
 
-socket.on('initGameClient', (data) => {
-  roomLog["roomName"] = data["name"];
-  roomLog["roomInfo"] = data["roomInfo"];
 
-  myHand = [...data["myHand"]];
-  opponentHand = [...data["opponentHand"]];
+socket.on('initGame', (data) => {
 
-  for(let i = 0; i < myHand.length; i++)
+  roomName = data["name"];
+  deck = [...data["deck"]];
+  onTableAttack = [...data["onTableAttack"]];
+  onTableDefense = [...data["onTableDefense"]];
+  playerTurn = data["playerTurn"];
+
+  if(mySocketID == playerTurn)
   {
-    renderMyCards(myHand[i]);
-  }
-
-  for(let i = 0; i < opponentHand.length; i++)
-  {
-    renderOpponentCards(opponentHand[i]);
-  }
-
-  if(mySocketID == roomLog["roomInfo"]["playerTurn"])
-  {
-    socket.emit('notifyStart', {roomName: roomLog["roomName"]});
-    alert('You start');
-    myTurn = 'attack';
+    myTurn = "ATTACK";
+    socket.emit('notifyStart', {roomName: roomName});
   }
   else
   {
-    myTurn = 'defense';
+    myTurn = "DEFEND";
+  }
+
+  myHand = [...data["myHand"]];
+  opponentHand = Number(data["opponentHand"]);
+
+  if(mySocketID == data["player1"])
+  {
+    whichPlayerAmI = "player1";
+  }
+  else
+  {
+    whichPlayerAmI = "player2";
+  }
+
+  attackCounter = Number(data["attackCounter"]);
+
+  renderMyHand(myHand);
+  renderOpponentHand(opponentHand);
+
+  //again to notify start
+  if(mySocketID == playerTurn)
+  {
+    alert("you start");
   }
 });
 
-socket.on('renderTable', (data) => {
 
+socket.on('attackMoveMade', (data) => {
+  renderOnTableAttack(data["onTableAttack"]);
+  renderMyHand(data["myHand"]);
+  attackCounter = data["attackCounter"];
 });
 
 
+socket.on('gettingAttacked', (data) => {
+  renderOnTableAttack(data["onTableAttack"]);
+  attackCounter = data["attackCounter"];
+  opponetCardField.removeChild(opponetCardField.childNodes[1]);
+});
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ----------------GAME START-------------------- */
+/* ------------------------------------ */
 hideCreateAndJoinRoomContainer();
