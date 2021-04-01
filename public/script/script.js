@@ -11,6 +11,7 @@ let onTableAttack = [];
 let onTableDefense = [];
 let playerTurn = '';
 let attackCounter = 0;
+let attackDefendCheck = '';
 
 /* ----------- DOM  ELEMENTS --------------------------------------------*/
 
@@ -113,6 +114,49 @@ const renderOnTableAttack = (arr) =>
 
 }
 
+const renderOnTableDefense = (arr) =>
+{
+  let oldOnTableDefense = [...onTableDefense];
+  onTableDefense = [...arr];
+
+  for(let i = 0; i < oldOnTableDefense.length; i++)
+  {
+    for(let j = 0; j < oldOnTableDefense.length; j++)
+    {
+      if(oldOnTableDefense[i]["DomID"] == onTableDefense[j]["DomID"])
+      {
+        if(oldOnTableDefense[i]["rendered"])
+        {
+          onTableDefense[j]["rendered"] = true;
+        }
+      }
+    }
+  }
+
+  for(let i = 0; i < onTableDefense.length; i++)
+  {
+    if(onTableDefense[i]["rendered"] == false)
+    {
+      let cardDiv = document.createElement('div');
+      cardDiv.classList.add("card");
+      cardDiv.setAttribute("id", onTableDefense[i]["DomID"]);
+      cardDiv.setAttribute("dataID",onTableDefense[i]["DomID"]);
+      onTableDefense[i]["rendered"] = true;
+      switch (i) {
+        case 0:$(defendPosition0).append(cardDiv);break;
+        case 1: $(defendPosition1).append(cardDiv); break;
+        case 2: $(defendPosition2).append(cardDiv); break;
+        case 3: $(defendPosition3).append(cardDiv); break;
+        case 4: $(defendPosition4).append(cardDiv); break;
+        case 5: $(defendPosition5).append(cardDiv); break;
+        default:
+      }
+    }
+    continue;
+  }
+}
+
+
 const findCardObjIndexByID = (idStr) =>
 {
   let id = idStr;
@@ -154,6 +198,158 @@ const checkAttack = (obj) =>
   return check;
 }
 
+const checkDefend = (obj) =>
+{
+  let check = false;
+  let checkObj = obj;
+  /* ------------------------------------------------------------------------*/
+  if(attackDefendCheck['position0'] == false && onTableAttack[0])
+  {
+      if(checkObj["jokerSuit"] == true && onTableAttack[0]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+
+      if(checkObj["jokerSuit"] == true && onTableAttack[0]["jokerSuit"] == true)
+      {
+        if(checkObj["rank"] > onTableAttack[0]["rank"])
+        {
+          check = true;
+        }
+      }
+
+      if(checkObj["suit"] == onTableAttack[0]["suit"])
+      {
+        if(checkObj["rank"] > onTableAttack[0]["rank"])
+        {
+          check = true;
+        }
+      }
+  }
+  /*------------------------------------------------------------------------------*/
+  if(attackDefendCheck['position1'] == false && onTableAttack[1])
+  {
+      if(checkObj["jokerSuit"] == true && onTableAttack[1]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+
+      if(checkObj["jokerSuit"] == true && onTableAttack[1]["jokerSuit"] == true)
+      {
+        if(checkObj["rank"] > onTableAttack[1]["rank"])
+        {
+          check = true;
+        }
+      }
+
+      if(checkObj["suit"] == onTableAttack[1]["suit"])
+      {
+        if(checkObj["rank"] > onTableAttack[1]["rank"])
+        {
+          check = true;
+        }
+      }
+  }
+  /*------------------------------------------------------------------------------*/
+  if(attackDefendCheck['position2'] == false && onTableAttack[2])
+  {
+      if(checkObj["jokerSuit"] == true && onTableAttack[2]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+
+      if(checkObj["jokerSuit"] == true && onTableAttack[2]["jokerSuit"] == true)
+      {
+        if(checkObj["rank"] > onTableAttack[2]["rank"])
+        {
+          check = true;
+        }
+      }
+
+      if(checkObj["suit"] == onTableAttack[2]["suit"])
+      {
+        if(checkObj["rank"] > onTableAttack[2]["rank"])
+        {
+          check = true;
+        }
+      }
+  }
+  /*------------------------------------------------------------------------------*/
+  if(attackDefendCheck['position3'] == false && onTableAttack[3])
+  {
+      if(checkObj["jokerSuit"] == true && onTableAttack[3]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+
+      if(checkObj["jokerSuit"] == true && onTableAttack[3]["jokerSuit"] == true)
+      {
+        if(checkObj["rank"] > onTableAttack[3]["rank"])
+        {
+          check = true;
+        }
+      }
+
+      if(checkObj["suit"] == onTableAttack[3]["suit"])
+      {
+        if(checkObj["rank"] > onTableAttack[3]["rank"])
+        {
+          check = true;
+        }
+      }
+  }
+  /*------------------------------------------------------------------------------*/
+  if(attackDefendCheck['position4'] == false && onTableAttack[4])
+  {
+      if(checkObj["jokerSuit"] == true && onTableAttack[4]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+
+      if(checkObj["jokerSuit"] == true && onTableAttack[4]["jokerSuit"] == true)
+      {
+        if(checkObj["rank"] > onTableAttack[4]["rank"])
+        {
+          check = true;
+        }
+      }
+
+      if(checkObj["suit"] == onTableAttack[4]["suit"])
+      {
+        if(checkObj["rank"] > onTableAttack[4]["rank"])
+        {
+          check = true;
+        }
+      }
+  }
+  /*------------------------------------------------------------------------------*/
+  if(attackDefendCheck['position5'] == false && onTableAttack[5])
+  {
+      if(checkObj["jokerSuit"] == true && onTableAttack[5]["jokerSuit"] == false)
+      {
+        check = true;
+      }
+
+      if(checkObj["jokerSuit"] == true && onTableAttack[5]["jokerSuit"] == true)
+      {
+        if(checkObj["rank"] > onTableAttack[5]["rank"])
+        {
+          check = true;
+        }
+      }
+
+      if(checkObj["suit"] == onTableAttack[5]["suit"])
+      {
+        if(checkObj["rank"] > onTableAttack[5]["rank"])
+        {
+          check = true;
+        }
+      }
+  }
+  /*------------------------------------------------------------------------------*/
+  return check;
+}
+
 const checkAttackCounter = () =>
 {
   if(attackCounter < 7)
@@ -183,7 +379,11 @@ const playerMove  = (e) =>
   }
   else
   {
-    
+    if(checkDefend(cardObj))
+    {
+      socket.emit('defendMove', {roomName: roomName, cardIndex: cardIndex, player: whichPlayerAmI});
+      propponentCardField.removeChild(propponentCardField.childNodes[cardIndex+1]);
+    }
   }
 }
 
@@ -418,6 +618,7 @@ socket.on('initGame', (data) => {
   }
 
   attackCounter = Number(data["attackCounter"]);
+  attackDefendCheck = data["attackDefendCheck"];
 
   renderMyHand(myHand);
   renderOpponentHand(opponentHand);
@@ -439,6 +640,20 @@ socket.on('attackMoveMade', (data) => {
 
 socket.on('gettingAttacked', (data) => {
   renderOnTableAttack(data["onTableAttack"]);
+  attackCounter = data["attackCounter"];
+  opponetCardField.removeChild(opponetCardField.childNodes[1]);
+});
+
+
+socket.on('defendMoveMade', (data) => {
+  renderOnTableDefense(data["onTableDefense"]);
+  renderMyHand(data['myHand']);
+  attackCounter = data["attackCounter"];
+  attackDefendCheck = data["attackDefendCheck"];
+});
+
+socket.on('gotDefended', (data) => {
+  renderOnTableDefense(data["onTableDefense"]);
   attackCounter = data["attackCounter"];
   opponetCardField.removeChild(opponetCardField.childNodes[1]);
 });

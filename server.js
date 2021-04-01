@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname,'public')));
 app.route('/').get((req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
-/* --------------------------------------------------------------------- */
+/* ----------------------------------GAME FUNCTIONS ----------------------------------- */
 let roomLog = {};
 
 const allCardsUnSorted = require('./cards');
@@ -160,6 +160,54 @@ const findAndRemoveCardByIndex = (roomNameStr, playerStr, cardIndexStr) =>
   return cardObj;
 }
 
+const setAttackDefendCheck = (roomNameStr, cardObj) =>
+{
+  let roomName = roomNameStr;
+  let card = cardObj;
+
+  if(roomLog[roomName])
+  {
+    /* -------------------------------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position0"] == false && roomLog[roomName]["onTableAttack"][0])
+    {
+      roomLog[roomName]["attackDefendCheck"]["position0"] = true;
+      roomLog[roomName]["onTableDefense"].push(card);
+    }
+    /*---------------------------------------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position1"] == false && roomLog[roomName]["onTableAttack"][1])
+    {
+      roomLog[roomName]["attackDefendCheck"]["position1"] = true;
+      roomLog[roomName]["onTableDefense"].push(card);
+    }
+    /*---------------------------------------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position2"] == false && roomLog[roomName]["onTableAttack"][2])
+    {
+      roomLog[roomName]["attackDefendCheck"]["position2"] = true;
+      roomLog[roomName]["onTableDefense"].push(card);
+    }
+    /*---------------------------------------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position3"] == false && roomLog[roomName]["onTableAttack"][3])
+    {
+      roomLog[roomName]["attackDefendCheck"]["position3"] = true;
+      roomLog[roomName]["onTableDefense"].push(card);
+    }
+    /*---------------------------------------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position4"] == false && roomLog[roomName]["onTableAttack"][4])
+    {
+      roomLog[roomName]["attackDefendCheck"]["position4"] = true;
+      roomLog[roomName]["onTableDefense"].push(card);
+    }
+    /*---------------------------------------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position5"] == false && roomLog[roomName]["onTableAttack"][5])
+    {
+      roomLog[roomName]["attackDefendCheck"]["position5"] = true;
+      roomLog[roomName]["onTableDefense"].push(card);
+    }
+    /*---------------------------------------------------------------------------------------------------------------*/
+  }
+}
+
+
 /* ------------------------------------------------------------------------------*/
 
 io.on('connection', socket => {
@@ -176,7 +224,7 @@ io.on('connection', socket => {
       socket.emit("roomName already in use");
       return;
     }
-    roomLog[roomName] = {deck: [], onTableAttack: [], onTableDefense: [], playerTurn:'', moveTurn: '', player1Hand: [], player2Hand: [], socketIDs:[], player1: '', player2: '', attackCounter: 0, attackDefendCheck: {}};
+    roomLog[roomName] = {deck: [], onTableAttack: [], onTableDefense: [], playerTurn:'', moveTurn: '', player1Hand: [], player2Hand: [], socketIDs:[], player1: '', player2: '', attackCounter: 0, attackDefendCheck: {"position0": false, "position1": false, "position2": false, "position3": false, "position4": false, "position5": false}};
     roomLog[roomName]["socketIDs"].push(socket.id);
     roomLog[roomName]["player1"] = socket.id;
     socket.join(roomName);
@@ -253,11 +301,12 @@ io.on('connection', socket => {
 
       if(clientSocketID == roomLog[roomName]["player1"])
       {
-        socket.emit('initGame', {name: roomName, deck: roomLog[roomName]["deck"],onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],playerTurn: roomLog[roomName]["playerTurn"], moveTurn: roomLog[roomName]["moveTurn"], myHand: roomLog[roomName]["player1Hand"], opponentHand: roomLog[roomName]["player2Hand"].length, player1: roomLog[roomName]["player1"], player2: roomLog[roomName]["player2"], attackCounter: roomLog[roomName]["attackCounter"]});
+        socket.emit('initGame', {name: roomName, deck: roomLog[roomName]["deck"],onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],playerTurn: roomLog[roomName]["playerTurn"], moveTurn: roomLog[roomName]["moveTurn"], myHand: roomLog[roomName]["player1Hand"], opponentHand: roomLog[roomName]["player2Hand"].length, player1: roomLog[roomName]["player1"], player2: roomLog[roomName]["player2"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
       }
       else
       {
-        socket.emit('initGame', {name: roomName, deck: roomLog[roomName]["deck"],onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],playerTurn: roomLog[roomName]["playerTurn"], moveTurn: roomLog[roomName]["moveTurn"], myHand: roomLog[roomName]["player2Hand"], opponentHand: roomLog[roomName]["player1Hand"].length, player1: roomLog[roomName]["player1"], player2: roomLog[roomName]["player2"],  attackCounter: roomLog[roomName]["attackCounter"]});
+        socket.emit('initGame', {name: roomName, deck: roomLog[roomName]["deck"],onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],playerTurn: roomLog[roomName]["playerTurn"], moveTurn: roomLog[roomName]["moveTurn"], myHand: roomLog[roomName]["player2Hand"], opponentHand: roomLog[roomName]["player1Hand"].length, player1: roomLog[roomName]["player1"], player2: roomLog[roomName]["player2"],  attackCounter: roomLog[roomName]["attackCounter"],
+        attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
       }
     }
   });
@@ -284,6 +333,27 @@ io.on('connection', socket => {
         roomLog[roomName]["attackCounter"] +=  1;
         socket.emit('attackMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player2Hand"], attackCounter: roomLog[roomName]["attackCounter"]});
         socket.to(roomName).emit('gettingAttacked', {onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"]});
+      }
+    }
+  });
+
+  socket.on('defendMove', (data) => {
+    let roomName = data["roomName"];
+    let cardIndex = data["cardIndex"];
+    let player = data["player"];
+
+    if(roomLog[roomName])
+    {
+      if(player == "player1")
+      {
+
+      }
+      else
+      {
+        let card = findAndRemoveCardByIndex(roomName, player, cardIndex);
+        setAttackDefendCheck(roomName, card);
+        socket.emit('defendMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player2Hand"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
+        socket.to(roomName).emit('gotDefended',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"]});
       }
     }
   });
