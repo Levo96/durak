@@ -42,7 +42,7 @@ let closeChatBoxBtn = document.getElementById('closeChatBoxBtn');
 /* --------------- GAMEPAGE/GAME TABLE -------------------------------- */
 
 // ------------ Deck Cards--------------------------------
-let deckCardCover = document.getElementById('deckCoverCardTrash');
+let deckCardCover = document.getElementById('deckCoverCard');
 let lastCardPosition = document.getElementById('cardDeckContainer');
 let trashCardCover = document.getElementById('deckCoverCardTrash');
 
@@ -70,6 +70,35 @@ let finishBtn = document.getElementById('finishBtn');
 let drawBtn = document.getElementById('drawBtn');
 
 //----------------------functions -------------------------------
+
+const showWinnerOverlay = (str) =>
+{
+
+  let resultOverlay = document.createElement('div');
+  resultOverlay.setAttribute("id", "resultOverlay");
+
+  let h1 = document.createElement('h1');
+  h1.setAttribute("id", "resultTitle");
+
+  h1.innerHTML = str + " won";
+
+  let restartButton = document.createElement('button');
+  restartButton.innerHTML = "restart";
+  restartButton.addEventListener('click', function restartGame(){
+    resultOverlay.style.display = "none";
+  });
+
+  restartButton.classList.add('resultOverlayBtns')
+  
+  $(resultOverlay).append(h1);
+  $(resultOverlay).append(restartButton);
+  $(resultOverlay).append(exitButton);
+
+  resultOverlay.style.display = "flex";
+
+  $('#roomContainer').append(resultOverlay);
+}
+
 
 const renderOnTableAttack = (arr) =>
 {
@@ -427,7 +456,7 @@ const renderMyHand = (arr) =>
 const renderOpponentHand = (handlength) =>
 {
   let len = handlength;
-  $(opponentHand).empty();
+  $(opponetCardField).empty();
   for(let i = 0; i < len; i++)
   {
     let cardDiv = document.createElement('div');
@@ -641,7 +670,7 @@ socket.on('attackMoveMade', (data) => {
 socket.on('gettingAttacked', (data) => {
   renderOnTableAttack(data["onTableAttack"]);
   attackCounter = data["attackCounter"];
-  opponetCardField.removeChild(opponetCardField.childNodes[1]);
+  opponetCardField.removeChild(opponetCardField.childNodes[0]);
 });
 
 
@@ -655,8 +684,133 @@ socket.on('defendMoveMade', (data) => {
 socket.on('gotDefended', (data) => {
   renderOnTableDefense(data["onTableDefense"]);
   attackCounter = data["attackCounter"];
-  opponetCardField.removeChild(opponetCardField.childNodes[1]);
+  opponetCardField.removeChild(opponetCardField.childNodes[0]);
+  attackDefendCheck = data["attackDefendCheck"];
 });
+
+
+socket.on('finishedRound', (data) => {
+  renderMyHand(data['myHand']);
+  renderOpponentHand(data['opponentHand']);
+  deck = [...data["deck"]];
+  attackCounter = data['attackCounter'];
+  attackDefendCheck = data["attackDefendCheck"];
+  myTurn = "DEFEND";
+});
+
+socket.on('newRound', (data) => {
+  renderMyHand(data['myHand']);
+  renderOpponentHand(data["opponentHand"]);
+  deck = [...data["deck"]];
+  attackCounter = data["attackCounter"];
+  attackDefendCheck = data["attackDefendCheck"];
+  myTurn = "ATTACK";
+});
+
+
+socket.on('cardsTaken', (data) => {
+  renderMyHand(data['myHand']);
+  renderOpponentHand(data['opponentHand']);
+  deck = [...data["deck"]];
+  attackCounter = data["attackCounter"];
+  attackDefendCheck = data["attackDefendCheck"];
+});
+
+socket.on('opponentTookCards', (data) => {
+  renderMyHand(data["myHand"]);
+  renderOpponentHand(data["opponentHand"]);
+  deck = [...data["deck"]];
+  attackCounter = data["attackCounter"];
+  attackDefendCheck = data["attackDefendCheck"];
+});
+
+socket.on('clearTableAfterRound', (data) => {
+
+  onTableAttack = [];
+  onTableDefense = [];
+
+  let allAttackPositionsDom = document.getElementsByClassName('attackPositions');
+  let allDefendPositionsDom = document.getElementsByClassName('defendPositions');
+
+  let allCardsOnTableDom = [...allAttackPositionsDom,...allDefendPositionsDom];
+
+  for(let i = 0; i < allCardsOnTableDom.length; i++)
+  {
+    $(allCardsOnTableDom[i]).empty();
+  }
+
+  trashCardCover.style.visibility = "visible";
+
+});
+
+socket.on('clearTableAfterDraw', (data) => {
+  onTableAttack = [];
+  onTableDefense = [];
+
+  let allAttackPositionsDom = document.getElementsByClassName('attackPositions');
+  let allDefendPositionsDom = document.getElementsByClassName('defendPositions');
+
+  let allCardsOnTableDom = [...allAttackPositionsDom,...allDefendPositionsDom];
+
+  for(let i = 0; i < allCardsOnTableDom.length; i++)
+  {
+    $(allCardsOnTableDom[i]).empty();
+  }
+});
+
+socket.on('removeDeckCoverCard', (data) => {
+  deckCardCover.setAttribute("id", "");
+  deckCardCover.style.visibility = "hidden";
+});
+
+socket.on('removeJokerSuitCard', (data) => {
+  document.getElementsByClassName('jokerSuitCardCover')[0].setAttribute("id", "");
+  document.getElementsByClassName('jokerSuitCardCover')[0].style.visibility = "hidden"
+});
+
+
+socket.on('weHaveAwinner', (data)=> {
+  let winner = data["winner"];
+  let winStr = '';
+
+  if(mySocketID == winner)
+  {
+    winStr = "you won";
+  }
+  else
+  {
+    winStr = "you lost";
+  }
+  console.log(winStr)
+  showWinnerOverlay(winStr);
+});
+
+finishBtn.addEventListener('click', () => {
+  if(myTurn == "ATTACK")
+  {
+    if(onTableAttack.length > 0 && onTableDefense.length > 0)
+    {
+      if(onTableAttack.length == onTableDefense.length)
+      {
+        socket.emit('finishRound', {roomName: roomName, player: whichPlayerAmI});
+      }
+    }
+  }
+});
+
+drawBtn.addEventListener('click', () => {
+  if(myTurn == "DEFEND")
+  {
+    if(onTableAttack.length > 0)
+    {
+      if(onTableAttack.length > onTableDefense.length || onTableAttack.length < onTableDefense.length)
+      {
+        socket.emit('drawCardsOnTable', {roomName: roomName, player: whichPlayerAmI});
+      }
+    }
+  }
+});
+
 
 /* ------------------------------------ */
 hideCreateAndJoinRoomContainer();
