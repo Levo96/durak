@@ -908,7 +908,8 @@ socket.on('clearGameExit', (data) => {
 
   let jokerSuitCardCover = document.getElementsByClassName('jokerSuitCardCover');
   lastCardPosition.removeChild(jokerSuitCardCover[0]);
-  deckCardCover.setAttribute("id", "deckCardCover");
+  deckCardCover.removeAttribute("id");
+  deckCardCover.setAttribute("id","deckCoverCard");
   deckCardCover.style.visibility = "visible";
   $(opponetCardField).empty();
   $(propponentCardField).empty();
@@ -973,7 +974,8 @@ socket.on('restartGameClient', (data) => {
 
   let jokerSuitCardCover = document.getElementsByClassName('jokerSuitCardCover');
   lastCardPosition.removeChild(jokerSuitCardCover[0]);
-  deckCardCover.setAttribute("id", "deckCardCover");
+  deckCardCover.removeAttribute("id");
+  deckCardCover.setAttribute("id","deckCoverCard");
   deckCardCover.style.visibility = "visible";
   $(opponetCardField).empty();
   $(propponentCardField).empty();
