@@ -58,7 +58,7 @@ const randomTurn = (roomName) =>
 {
   if(roomLog[roomName])
   {
-    let random = 0//Math.floor(Math.random() * (1 + 1));
+    let random = Math.floor(Math.random() * (1 + 1));
     let turn = '';
     if(random)
     {
@@ -330,7 +330,24 @@ const checkWinner = (roomNameStr, playerStr) =>
   }
 }
 
+const resetGameExit = (roomNameStr) =>
+{
+  let roomName = roomNameStr;
 
+  if(roomLog[roomNameStr])
+  {
+    roomLog[roomName]["deck"] = [];
+    roomLog[roomName]["player1Hand"] = [];
+    roomLog[roomName]["player2Hand"] = [];
+    roomLog[roomName]['player1'] = '';
+    roomLog[roomName]['player2'] = '';
+    roomLog[roomName]["playerTurn"] = '';
+    roomLog[roomName]["moveTurn"] = '';
+    roomLog[roomName]["winner"] = '';
+    roomLog[roomName]["restartReqCounter"] = 0;
+    resetTablesAndAttackDefenseCheckAndCounter(roomName);
+  }
+}
 /* ------------------------------------------------------------------------------*/
 
 io.on('connection', socket => {
@@ -347,7 +364,7 @@ io.on('connection', socket => {
       socket.emit("roomName already in use");
       return;
     }
-    roomLog[roomName] = {deck: [], onTableAttack: [], onTableDefense: [], playerTurn:'', moveTurn: '', player1Hand: [], player2Hand: [], socketIDs:[], player1: '', player2: '', attackCounter: 0, attackDefendCheck: {"position0": false, "position1": false, "position2": false, "position3": false, "position4": false, "position5": false, winner: ''}};
+    roomLog[roomName] = {deck: [], onTableAttack: [], onTableDefense: [], playerTurn:'', moveTurn: '', player1Hand: [], player2Hand: [], socketIDs:[], player1: '', player2: '', attackCounter: 0, attackDefendCheck: {"position0": false, "position1": false, "position2": false, "position3": false, "position4": false, "position5":false},winner: '', restartReqCounter: 0};
     roomLog[roomName]["socketIDs"].push(socket.id);
     roomLog[roomName]["player1"] = socket.id;
     socket.join(roomName);
@@ -530,6 +547,73 @@ io.on('connection', socket => {
         socket.to(roomName).emit('opponentTookCards', {name: roomName, deck: roomLog[roomName]["deck"],onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],playerTurn: roomLog[roomName]["playerTurn"], moveTurn: roomLog[roomName]["moveTurn"], myHand: roomLog[roomName]["player1Hand"], opponentHand: roomLog[roomName]["player2Hand"].length, player1: roomLog[roomName]["player1"], player2: roomLog[roomName]["player2"],  attackCounter: roomLog[roomName]["attackCounter"],attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
       }
     }
+  });
+
+  socket.on('readyToLeaveRoom', (data) => {
+    let roomName = data["roomName"];
+    let clientSocketID = socket.id;
+
+    if(roomLog[roomName])
+    {
+        if(roomLog[roomName]["socketIDs"].length > 1)
+        {
+          socket.to(roomName).emit('clearGameExit');
+          socket.to(roomName).emit('otherPlayerLeftGame');
+        }
+        else
+        {
+          delete roomLog[roomName];
+        }
+        socket.leave(roomName);
+        socket.emit('exit');
+    }
+  });
+
+  socket.on('redirectUser', (data) => {
+    let roomName = data["roomName"];
+    delete roomLog[roomName];
+    socket.leave(roomName);
+    socket.emit('userRedirected', {name: roomName});
+  });
+
+  socket.on('readyForRestart', (data) => {
+    let roomName = data["roomName"];
+
+    if(roomLog[roomName])
+    {
+      roomLog[roomName]["restartReqCounter"] += 1;
+      if(roomLog[roomName]["restartReqCounter"] >= 2)
+      {
+        io.in(roomName).emit('restartGameClient');
+        roomLog[roomName]["restartReqCounter"] = 0;
+      }
+    }
+
+  socket.on('clientGameRestarted', (data) => {
+    let roomName = data["roomName"];
+
+    if(roomLog[roomName])
+    {
+      roomLog[roomName]["restartReqCounter"] += 1;
+      if(roomLog[roomName]["restartReqCounter"] >= 2)
+      {
+        let socketIDs = roomLog[roomName]["socketIDs"];
+        let player1 = roomLog[roomName]["player1"];
+        let player2 = roomLog[roomName]["player2"];
+
+        roomLog[roomName] = {deck: [], onTableAttack: [], onTableDefense: [], playerTurn:'', moveTurn: '', player1Hand: [], player2Hand: [], socketIDs:[], player1: '', player2: '', attackCounter: 0, attackDefendCheck: {"position0": false, "position1": false, "position2": false, "position3": false, "position4": false, "position5":false},winner: '', restartReqCounter: 0};
+        roomLog[roomName]["socketIDs"] = [...socketIDs];
+        roomLog[roomName]["player1"] = player1;
+        roomLog[roomName]["player2"] = player2;
+        mixCards(roomName);
+        randomTurn(roomName);
+        shuffleCards(roomName);
+        io.in(roomName).emit('loadingGameAssets', {name: roomName, roomInfo: roomLog[roomName]});
+      }
+    }
+
+  });
+
   });
 
 }); //-> end of io

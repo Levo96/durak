@@ -12,7 +12,7 @@ let onTableDefense = [];
 let playerTurn = '';
 let attackCounter = 0;
 let attackDefendCheck = '';
-
+let resultOverlayInfo = "none";
 /* ----------- DOM  ELEMENTS --------------------------------------------*/
 
 /* --------------- HOMEPAGE -------------------------------- */
@@ -68,10 +68,10 @@ let defendPosition5 = document.getElementById('defendPosition5');
 // ------------- game actions btns -----------------------------
 let finishBtn = document.getElementById('finishBtn');
 let drawBtn = document.getElementById('drawBtn');
-
+let exitGameBtn = document.getElementById('vsCpuHeaderExitBtn');
 //----------------------functions -------------------------------
 
-const showWinnerOverlay = (str) =>
+let showWinnerOverlay = (str) =>
 {
 
   let resultOverlay = document.createElement('div');
@@ -89,18 +89,31 @@ const showWinnerOverlay = (str) =>
   });
 
   restartButton.classList.add('resultOverlayBtns')
-  
+
+  restartButton.addEventListener('click', ()=> {
+    socket.emit('readyForRestart', {roomName: roomName});
+  });
+
   $(resultOverlay).append(h1);
   $(resultOverlay).append(restartButton);
-  $(resultOverlay).append(exitButton);
 
   resultOverlay.style.display = "flex";
 
-  $('#roomContainer').append(resultOverlay);
+  if(resultOverlayInfo == "none")
+  {
+    $('#roomContainer').append(resultOverlay);
+    resultOverlayInfo = "visible";
+  }
+
+  if(resultOverlayInfo == "hidden")
+  {
+    resultOverlay.style.display = "flex";
+    resultOverlayInfo = "visible";
+  }
 }
 
 
-const renderOnTableAttack = (arr) =>
+let renderOnTableAttack = (arr) =>
 {
   let oldOnTableAttack = [...onTableAttack];
   onTableAttack = [...arr];
@@ -143,7 +156,7 @@ const renderOnTableAttack = (arr) =>
 
 }
 
-const renderOnTableDefense = (arr) =>
+let renderOnTableDefense = (arr) =>
 {
   let oldOnTableDefense = [...onTableDefense];
   onTableDefense = [...arr];
@@ -186,7 +199,7 @@ const renderOnTableDefense = (arr) =>
 }
 
 
-const findCardObjIndexByID = (idStr) =>
+let findCardObjIndexByID = (idStr) =>
 {
   let id = idStr;
   let index = 0;
@@ -202,7 +215,7 @@ const findCardObjIndexByID = (idStr) =>
   return index;
 }
 
-const checkAttack = (obj) =>
+let checkAttack = (obj) =>
 {
   let allCardsOnTable = [...onTableAttack, ...onTableDefense];
   let check = false;
@@ -227,7 +240,7 @@ const checkAttack = (obj) =>
   return check;
 }
 
-const checkDefend = (obj) =>
+let checkDefend = (obj) =>
 {
   let check = false;
   let checkObj = obj;
@@ -379,7 +392,7 @@ const checkDefend = (obj) =>
   return check;
 }
 
-const checkAttackCounter = () =>
+let checkAttackCounter = () =>
 {
   if(attackCounter < 7)
   {
@@ -391,10 +404,10 @@ const checkAttackCounter = () =>
   }
 }
 
-const playerMove  = (e) =>
+let playerMove  = (e) =>
 {
   let element = e.target;
-  let elementID = element.getAttribute("dataID");
+  let elementID = element.getAttribute("id");
   let cardIndex = findCardObjIndexByID(elementID);
   let cardObj = myHand[cardIndex];
   if(myTurn == "ATTACK")
@@ -403,7 +416,7 @@ const playerMove  = (e) =>
     if(checkAttack(cardObj) && checkAttackCounter())
     {
       socket.emit('attackMove', {roomName: roomName, cardIndex: cardIndex, player: whichPlayerAmI});
-      propponentCardField.removeChild(propponentCardField.childNodes[cardIndex+1]);
+      propponentCardField.removeChild(propponentCardField.childNodes[cardIndex]);
     }
   }
   else
@@ -411,12 +424,12 @@ const playerMove  = (e) =>
     if(checkDefend(cardObj))
     {
       socket.emit('defendMove', {roomName: roomName, cardIndex: cardIndex, player: whichPlayerAmI});
-      propponentCardField.removeChild(propponentCardField.childNodes[cardIndex+1]);
+      propponentCardField.removeChild(propponentCardField.childNodes[cardIndex]);
     }
   }
 }
 
-const renderMyHand = (arr) =>
+let renderMyHand = (arr) =>
 {
 
   let oldMyHand = [...myHand];
@@ -453,7 +466,7 @@ const renderMyHand = (arr) =>
 }
 
 
-const renderOpponentHand = (handlength) =>
+let renderOpponentHand = (handlength) =>
 {
   let len = handlength;
   $(opponetCardField).empty();
@@ -506,6 +519,12 @@ let showGameRoom = () =>
 {
   $(homePageContainer).hide();
   $(roomContainer).fadeIn();
+}
+
+let hideGameRoom = () =>
+{
+  $(roomContainer).hide();
+  $(homePageContainer).fadeIn();
 }
 
 $(toCreateRoomBtn).on('click', ()=> {
@@ -592,7 +611,9 @@ socket.on('newMessage', (data)=> {
 socket.on('userJoinedRoom', (data) => {
   showGameRoom();
   socket.emit('getSocketID');
+  $('#roomTitle').text('');
   $('#roomTitle').text('Room: ' + data["name"]);
+  $('#roomPlayerCount').text('');
   $('#roomPlayerCount').text('Players: '+ data["roomInfo"]["socketIDs"].length);
 });
 
@@ -610,6 +631,9 @@ socket.on("loadingGameAssets", (data) => {
   jokerSuitCardCover.classList.add('jokerSuitCardCover');
   jokerSuitCardCover.setAttribute("id", data["roomInfo"]["deck"][0]["DomID"]);
   $(lastCardPosition).append(jokerSuitCardCover);
+
+  $(opponetCardField).empty();
+  $(propponentCardField).empty();
 
   socket.emit('readyForInitGame', {roomName: roomName});
 
@@ -781,7 +805,6 @@ socket.on('weHaveAwinner', (data)=> {
   {
     winStr = "you lost";
   }
-  console.log(winStr)
   showWinnerOverlay(winStr);
 });
 
@@ -811,6 +834,114 @@ drawBtn.addEventListener('click', () => {
   }
 });
 
+exitGameBtn.addEventListener('click', () => {
+  socket.emit('readyToLeaveRoom', {roomName: roomName});
+});
+
+socket.on('clearGameExit', (data) => {
+
+  myHand = [];
+  opponentHand = 0;
+  deck = [];
+  myTurn = '';
+  whichPlayerAmI = '';
+  onTableAttack = [];
+  onTableDefense = [];
+  playerTurn = '';
+  attackCounter = 0;
+  attackDefendCheck = '';
+
+  if(resultOverlayInfo == "visible")
+  {
+    document.getElementById('resultTitle').innerHTML = '';
+    document.getElementById('resultOverlay').style.display = 'none';
+    resultOverlay = "hidden";
+  }
+
+  let jokerSuitCardCover = document.getElementsByClassName('jokerSuitCardCover');
+  lastCardPosition.removeChild(jokerSuitCardCover[0]);
+  deckCardCover.style.visibility = "visible";
+  $(opponetCardField).empty();
+  $(propponentCardField).empty();
+
+  let allAttackPositionsDom = document.getElementsByClassName('attackPositions');
+  let allDefendPositionsDom = document.getElementsByClassName('defendPositions');
+  let allCardsOnTableDom = [...allAttackPositionsDom, ...allDefendPositionsDom];
+
+  for(let i = 0; i < allCardsOnTableDom.length; i++)
+  {
+    $(allCardsOnTableDom[i]).empty();
+  }
+
+  trashCardCover.style.visibility = "hidden";
+
+  $('#chatBox').empty();
+  $(openChatBox).css('color', 'darkgrey');
+
+});
+
+socket.on('otherPlayerLeftGame', (data)=> {
+  alert("other player left the game\nwait for another to join");
+  socket.emit('redirectUser', {roomName: roomName});
+});
+
+
+socket.on('exit', (data) => {
+
+  mySocketID = '';
+  roomName = '';
+  $('#roomTitle').text("");
+  $('#roomPlayerCount').text("")
+  hideGameRoom();
+  location.reload();
+
+});
+
+socket.on('userRedirected', (data) => {
+  socket.emit('createRoom', {roomName: data["name"]});
+});
+
+
+socket.on('restartGameClient', (data) => {
+
+  myHand = [];
+  opponentHand = 0;
+  deck = [];
+  myTurn = '';
+  whichPlayerAmI = '';
+  onTableAttack = [];
+  onTableDefense = [];
+  playerTurn = '';
+  attackCounter = 0;
+  attackDefendCheck = '';
+
+  if(resultOverlayInfo == "visible")
+  {
+    document.getElementById('resultTitle').innerHTML = '';
+    document.getElementById('resultOverlay').style.display = 'none';
+    resultOverlay = "hidden";
+  }
+
+  let jokerSuitCardCover = document.getElementsByClassName('jokerSuitCardCover');
+  lastCardPosition.removeChild(jokerSuitCardCover[0]);
+  deckCardCover.style.visibility = "visible";
+  $(opponetCardField).empty();
+  $(propponentCardField).empty();
+
+  let allAttackPositionsDom = document.getElementsByClassName('attackPositions');
+  let allDefendPositionsDom = document.getElementsByClassName('defendPositions');
+  let allCardsOnTableDom = [...allAttackPositionsDom, ...allDefendPositionsDom];
+
+  for(let i = 0; i < allCardsOnTableDom.length; i++)
+  {
+    $(allCardsOnTableDom[i]).empty();
+  }
+
+  trashCardCover.style.visibility = "hidden";
+
+  socket.emit('clientGameRestarted', {roomName: roomName});
+
+});
 
 /* ------------------------------------ */
 hideCreateAndJoinRoomContainer();
