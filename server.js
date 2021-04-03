@@ -20,9 +20,9 @@ app.route('/').get((req, res) => {
 /* ----------------------------------GAME FUNCTIONS ----------------------------------- */
 let roomLog = {};
 
-const allCardsUnSorted = require('./cards');
+let allCardsUnSorted = require('./cards');
 
-const mixCards = (roomName) =>
+let mixCards = (roomName) =>
 {
   if(roomLog[roomName])
   {
@@ -54,7 +54,7 @@ const mixCards = (roomName) =>
   }
 }
 
-const randomTurn = (roomName) =>
+let randomTurn = (roomName) =>
 {
   if(roomLog[roomName])
   {
@@ -75,7 +75,7 @@ const randomTurn = (roomName) =>
   }
 }
 
-const checkDeckDom = (roomNameStr) =>
+let checkDeckDom = (roomNameStr) =>
 {
   let roomName = roomNameStr;
   if(roomLog[roomName])
@@ -91,7 +91,7 @@ const checkDeckDom = (roomNameStr) =>
   }
 }
 
-const shuffleCards = (roomNameStr) =>
+let shuffleCards = (roomNameStr) =>
 {
   let roomName = roomNameStr;
   if(roomLog[roomName])
@@ -139,7 +139,7 @@ const shuffleCards = (roomNameStr) =>
   }
 }
 
-const findAndRemoveCardByIndex = (roomNameStr, playerStr, cardIndexStr) =>
+let findAndRemoveCardByIndex = (roomNameStr, playerStr, cardIndexStr) =>
 {
   let roomName = roomNameStr;
   let player = playerStr;
@@ -177,7 +177,7 @@ const findAndRemoveCardByIndex = (roomNameStr, playerStr, cardIndexStr) =>
   return cardObj;
 }
 
-const setAttackDefendCheck = (roomNameStr, cardObj) =>
+let setAttackDefendCheck = (roomNameStr, cardObj) =>
 {
   let roomName = roomNameStr;
   let card = cardObj;
@@ -192,35 +192,35 @@ const setAttackDefendCheck = (roomNameStr, cardObj) =>
       return;
     }
     /*---------------------------------------------------------------------------------------------------------------*/
-    if(roomLog[roomName]["attackDefendCheck"]["position1"] == false && roomLog[roomName]["onTableAttack"][1])
+    else if(roomLog[roomName]["attackDefendCheck"]["position1"] == false && roomLog[roomName]["onTableAttack"][1])
     {
       roomLog[roomName]["attackDefendCheck"]["position1"] = true;
       roomLog[roomName]["onTableDefense"].push(card);
       return;
     }
     /*---------------------------------------------------------------------------------------------------------------*/
-    if(roomLog[roomName]["attackDefendCheck"]["position2"] == false && roomLog[roomName]["onTableAttack"][2])
+    else if(roomLog[roomName]["attackDefendCheck"]["position2"] == false && roomLog[roomName]["onTableAttack"][2])
     {
       roomLog[roomName]["attackDefendCheck"]["position2"] = true;
       roomLog[roomName]["onTableDefense"].push(card);
       return;
     }
     /*---------------------------------------------------------------------------------------------------------------*/
-    if(roomLog[roomName]["attackDefendCheck"]["position3"] == false && roomLog[roomName]["onTableAttack"][3])
+    else if(roomLog[roomName]["attackDefendCheck"]["position3"] == false && roomLog[roomName]["onTableAttack"][3])
     {
       roomLog[roomName]["attackDefendCheck"]["position3"] = true;
       roomLog[roomName]["onTableDefense"].push(card);
       return;
     }
     /*---------------------------------------------------------------------------------------------------------------*/
-    if(roomLog[roomName]["attackDefendCheck"]["position4"] == false && roomLog[roomName]["onTableAttack"][4])
+    else if(roomLog[roomName]["attackDefendCheck"]["position4"] == false && roomLog[roomName]["onTableAttack"][4])
     {
       roomLog[roomName]["attackDefendCheck"]["position4"] = true;
       roomLog[roomName]["onTableDefense"].push(card);
       return;
     }
     /*---------------------------------------------------------------------------------------------------------------*/
-    if(roomLog[roomName]["attackDefendCheck"]["position5"] == false && roomLog[roomName]["onTableAttack"][5])
+    else if(roomLog[roomName]["attackDefendCheck"]["position5"] == false && roomLog[roomName]["onTableAttack"][5])
     {
       roomLog[roomName]["attackDefendCheck"]["position5"] = true;
       roomLog[roomName]["onTableDefense"].push(card);
@@ -230,7 +230,7 @@ const setAttackDefendCheck = (roomNameStr, cardObj) =>
   }
 }
 
-const resetTablesAndAttackDefenseCheckAndCounter = (roomNameStr) =>
+let resetTablesAndAttackDefenseCheckAndCounter = (roomNameStr) =>
 {
   let roomName = roomNameStr;
   if(roomLog[roomName])
@@ -245,7 +245,7 @@ const resetTablesAndAttackDefenseCheckAndCounter = (roomNameStr) =>
   }
 }
 
-const turnToggle = (roomNameStr) =>
+let turnToggle = (roomNameStr) =>
 {
   let roomName = roomNameStr;
 
@@ -262,7 +262,7 @@ const turnToggle = (roomNameStr) =>
   }
 }
 
-const drawCardsFromTable = (roomNameStr, playerStr) =>
+let drawCardsFromTable = (roomNameStr, playerStr) =>
 {
   let roomName = roomNameStr;
   let player = playerStr;
@@ -287,7 +287,7 @@ const drawCardsFromTable = (roomNameStr, playerStr) =>
   }
 }
 
-const checkWinner = (roomNameStr, playerStr) =>
+let checkWinner = (roomNameStr, playerStr) =>
 {
   let roomName = roomNameStr;
   let player = playerStr;
@@ -330,7 +330,7 @@ const checkWinner = (roomNameStr, playerStr) =>
   }
 }
 
-const resetGameExit = (roomNameStr) =>
+let resetGameExit = (roomNameStr) =>
 {
   let roomName = roomNameStr;
 
@@ -348,6 +348,217 @@ const resetGameExit = (roomNameStr) =>
     resetTablesAndAttackDefenseCheckAndCounter(roomName);
   }
 }
+
+let reCheckAttackCounter = (roomNameStr) =>
+{
+  let roomName = roomNameStr;
+  if(roomLog[roomName])
+  {
+    if(roomLog[roomName]["attackCounter"] < 7)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+}
+
+let reCheckAttackMove = (roomNameStr, playerStr, cardIndexStr) =>
+{
+  let roomName = roomNameStr;
+  let check = false;
+  let cardIndex = Number(cardIndexStr);
+  if(roomLog[roomName])
+  {
+    if(roomLog[roomName]["onTableAttack"].length == 0)
+    {
+      check = true;
+    }
+    else
+    {
+      let player = playerStr;
+      let cardObj = '';
+      if(player == "player1")
+      {
+        cardObj = roomLog[roomName]["player1Hand"][cardIndex];
+      }
+      else
+      {
+        cardObj = roomLog[roomName]["player2Hand"][cardIndex];
+      }
+
+      let allCardsOnTable = [...roomLog[roomName]["onTableAttack"], ...roomLog[roomName]["onTableDefense"]];
+
+      for(let i = 0; i < allCardsOnTable.length; i++)
+      {
+        if(cardObj["value"] == allCardsOnTable[i]["value"])
+        {
+          check = true;
+        }
+      }
+    }
+  }
+  return check;
+}
+
+
+let reCheckDefendMove = (roomNameStr, playerStr, cardIndexStr) =>
+{
+  let roomName = roomNameStr;
+  let player = playerStr;
+  let cardIndex = Number(cardIndexStr);
+  let check = false;
+  if(roomLog[roomName])
+  {
+    let cardObj = '';
+
+    if(player == "player1")
+    {
+      cardObj = roomLog[roomName]["player1Hand"][cardIndex];
+    }
+    else
+    {
+      cardObj = roomLog[roomName]["player2Hand"][cardIndex];
+    }
+    /* --------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position0"] == false && roomLog[roomName]["onTableAttack"][0])
+    {
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][0]["jokerSuit"] == false)
+      {
+          check = true;
+      }
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][0]["jokerSuit"] == true)
+      {
+          if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][0]["rank"])
+          {
+            check = true;
+          }
+      }
+      if(cardObj["suit"] == roomLog[roomName]["onTableAttack"][0]["suit"])
+      {
+        if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][0]["rank"])
+        {
+          check = true;
+        }
+      }
+    }
+    /*------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position1"] == false && roomLog[roomName]["onTableAttack"][1])
+    {
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][1]["jokerSuit"] == false)
+      {
+          check = true;
+      }
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][1]["jokerSuit"] == true)
+      {
+          if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][1]["rank"])
+          {
+            check = true;
+          }
+      }
+      if(cardObj["suit"] == roomLog[roomName]["onTableAttack"][1]["suit"])
+      {
+        if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][1]["rank"])
+        {
+          check = true;
+        }
+      }
+    }
+    /*------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position2"] == false && roomLog[roomName]["onTableAttack"][2])
+    {
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][2]["jokerSuit"] == false)
+      {
+          check = true;
+      }
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][2]["jokerSuit"] == true)
+      {
+          if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][2]["rank"])
+          {
+            check = true;
+          }
+      }
+      if(cardObj["suit"] == roomLog[roomName]["onTableAttack"][2]["suit"])
+      {
+        if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][2]["rank"])
+        {
+          check = true;
+        }
+      }
+    }
+    /*------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position3"] == false && roomLog[roomName]["onTableAttack"][3])
+    {
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][3]["jokerSuit"] == false)
+      {
+          check = true;
+      }
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][3]["jokerSuit"] == true)
+      {
+          if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][3]["rank"])
+          {
+            check = true;
+          }
+      }
+      if(cardObj["suit"] == roomLog[roomName]["onTableAttack"][3]["suit"])
+      {
+        if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][3]["rank"])
+        {
+          check = true;
+        }
+      }
+    }
+    /*------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position4"] == false && roomLog[roomName]["onTableAttack"][4])
+    {
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][4]["jokerSuit"] == false)
+      {
+          check = true;
+      }
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][4]["jokerSuit"] == true)
+      {
+          if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][4]["rank"])
+          {
+            check = true;
+          }
+      }
+      if(cardObj["suit"] == roomLog[roomName]["onTableAttack"][4]["suit"])
+      {
+        if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][4]["rank"])
+        {
+          check = true;
+        }
+      }
+    }
+    /*------------------------------------------------------------------------------*/
+    if(roomLog[roomName]["attackDefendCheck"]["position5"] == false && roomLog[roomName]["onTableAttack"][5])
+    {
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][5]["jokerSuit"] == false)
+      {
+          check = true;
+      }
+      if(cardObj["jokerSuit"] == true && roomLog[roomName]["onTableAttack"][5]["jokerSuit"] == true)
+      {
+          if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][5]["rank"])
+          {
+            check = true;
+          }
+      }
+      if(cardObj["suit"] == roomLog[roomName]["onTableAttack"][5]["suit"])
+      {
+        if(cardObj["rank"] > roomLog[roomName]["onTableAttack"][5]["rank"])
+        {
+          check = true;
+        }
+      }
+    }
+    /* --------------------------------------------------------------------------- */
+  }
+  return check;
+}
+
 /* ------------------------------------------------------------------------------*/
 
 io.on('connection', socket => {
@@ -458,23 +669,30 @@ io.on('connection', socket => {
 
     if(roomLog[roomName])
     {
+      roomLog[roomName]["attackCounter"] +=  1;
       if(player == "player1")
       {
-        let card = findAndRemoveCardByIndex(roomName, player, cardIndex);
-        roomLog[roomName]["onTableAttack"].push(card);
-        roomLog[roomName]["attackCounter"] +=  1;
-        socket.emit('attackMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player1Hand"], attackCounter: roomLog[roomName]["attackCounter"]});
-        socket.to(roomName).emit('gettingAttacked', {onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"]});
-        checkWinner(roomName, player);
+        if(reCheckAttackMove(roomName, player, cardIndex) && reCheckAttackCounter(roomName))
+        {
+          let card = findAndRemoveCardByIndex(roomName, player, cardIndex);
+          roomLog[roomName]["onTableAttack"].push(card);
+          socket.emit('attackMoveCheckPassed', {cardIndex: cardIndex});
+          socket.emit('attackMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player1Hand"], attackCounter: roomLog[roomName]["attackCounter"]});
+          socket.to(roomName).emit('gettingAttacked', {onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"]});
+          checkWinner(roomName, player);
+        }
       }
       else
       {
-        let card = findAndRemoveCardByIndex(roomName, player, cardIndex);
-        roomLog[roomName]["onTableAttack"].push(card);
-        roomLog[roomName]["attackCounter"] +=  1;
-        socket.emit('attackMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player2Hand"], attackCounter: roomLog[roomName]["attackCounter"]});
-        socket.to(roomName).emit('gettingAttacked', {onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"]});
-        checkWinner(roomName, player);
+        if(reCheckAttackMove(roomName, player, cardIndex) && reCheckAttackCounter(roomName))
+        {
+          let card = findAndRemoveCardByIndex(roomName, player, cardIndex);
+          roomLog[roomName]["onTableAttack"].push(card);
+          socket.emit('attackMoveCheckPassed', {cardIndex: cardIndex});
+          socket.emit('attackMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player2Hand"], attackCounter: roomLog[roomName]["attackCounter"]});
+          socket.to(roomName).emit('gettingAttacked', {onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"]});
+          checkWinner(roomName, player);
+        }
       }
     }
   });
@@ -486,20 +704,24 @@ io.on('connection', socket => {
 
     if(roomLog[roomName])
     {
-      let card = findAndRemoveCardByIndex(roomName, player, cardIndex);
-      setAttackDefendCheck(roomName, card);
-      console.log(roomLog[roomName]["onTableDefense"]);
-      if(player == "player1")
+      if(reCheckDefendMove(roomName, player, cardIndex))
       {
-        socket.emit('defendMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player1Hand"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
-        socket.to(roomName).emit('gotDefended',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
-        checkWinner(roomName, player);
-      }
-      else
-      {
-        socket.emit('defendMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player2Hand"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
-        socket.to(roomName).emit('gotDefended',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
-        checkWinner(roomName, player);
+        let card = findAndRemoveCardByIndex(roomName, player, cardIndex);
+        setAttackDefendCheck(roomName, card);
+        if(player == "player1")
+        {
+          socket.emit('defendMoveCheckPassed', {cardIndex: cardIndex});
+          socket.emit('defendMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player1Hand"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
+          socket.to(roomName).emit('gotDefended',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
+          checkWinner(roomName, player);
+        }
+        else
+        {
+          socket.emit('defendMoveCheckPassed', {cardIndex: cardIndex});
+          socket.emit('defendMoveMade',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"],myHand: roomLog[roomName]["player2Hand"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
+          socket.to(roomName).emit('gotDefended',{onTableAttack: roomLog[roomName]["onTableAttack"], onTableDefense: roomLog[roomName]["onTableDefense"], attackCounter: roomLog[roomName]["attackCounter"], attackDefendCheck: roomLog[roomName]["attackDefendCheck"]});
+          checkWinner(roomName, player);
+        }
       }
     }
   });

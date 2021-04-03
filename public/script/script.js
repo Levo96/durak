@@ -243,152 +243,191 @@ let checkAttack = (obj) =>
 let checkDefend = (obj) =>
 {
   let check = false;
-  let checkObj = obj;
-  /* ------------------------------------------------------------------------*/
-  if(attackDefendCheck['position0'] == false && onTableAttack[0])
+  let cardObj = obj;
+  let openPosition = "";
+  let number = '';
+  for(let x in attackDefendCheck)
   {
-      if(checkObj["jokerSuit"] == true && onTableAttack[0]["jokerSuit"] == false)
+    let number = x.slice(x.length -1, );
+    if(attackDefendCheck[x] == false && onTableAttack[number])
+    {
+      openPosition = x;
+      break;
+    }
+  }
+
+  switch(openPosition)
+  {
+    case 'position0':
+      number = openPosition.slice(openPosition.length - 1, );
+      if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == false)
       {
         check = true;
       }
-
-      if(checkObj["jokerSuit"] == true && onTableAttack[0]["jokerSuit"] == true)
+      else if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == true)
       {
-        if(checkObj["rank"] > onTableAttack[0]["rank"])
+        if(cardObj["rank"] > onTableAttack[number]["rank"])
         {
           check = true;
         }
       }
-
-      if(checkObj["suit"] == onTableAttack[0]["suit"])
+      else if(cardObj["jokerSuit"] == false && onTableAttack[number]["jokerSuit"] == false)
       {
-        if(checkObj["rank"] > onTableAttack[0]["rank"])
+        if(cardObj["suit"] == onTableAttack[number]["suit"])
         {
-          check = true;
+          if(cardObj["rank"] > onTableAttack[number]["rank"])
+          {
+            check = true;
+          }
         }
       }
-  }
-  /*------------------------------------------------------------------------------*/
-  if(attackDefendCheck['position1'] == false && onTableAttack[1])
-  {
-      if(checkObj["jokerSuit"] == true && onTableAttack[1]["jokerSuit"] == false)
+      else
+      {
+        check = false;
+      }
+    break;
+    case 'position1':
+    number = openPosition.slice(openPosition.length - 1, );
+    if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == false)
+    {
+      check = true;
+    }
+    else if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == true)
+    {
+      if(cardObj["rank"] > onTableAttack[number]["rank"])
       {
         check = true;
       }
-
-      if(checkObj["jokerSuit"] == true && onTableAttack[1]["jokerSuit"] == true)
+    }
+    else if(cardObj["jokerSuit"] == false && onTableAttack[number]["jokerSuit"] == false)
+    {
+      if(cardObj["suit"] == onTableAttack[number]["suit"])
       {
-        if(checkObj["rank"] > onTableAttack[1]["rank"])
+        if(cardObj["rank"] > onTableAttack[number]["rank"])
         {
           check = true;
         }
       }
-
-      if(checkObj["suit"] == onTableAttack[1]["suit"])
-      {
-        if(checkObj["rank"] > onTableAttack[1]["rank"])
-        {
-          check = true;
-        }
-      }
-  }
-  /*------------------------------------------------------------------------------*/
-  if(attackDefendCheck['position2'] == false && onTableAttack[2])
-  {
-      if(checkObj["jokerSuit"] == true && onTableAttack[2]["jokerSuit"] == false)
+    }
+    else
+    {
+      check = false;
+    }
+    break;
+    case 'position2':
+    number = openPosition.slice(openPosition.length - 1, );
+    if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == false)
+    {
+      check = true;
+    }
+    else if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == true)
+    {
+      if(cardObj["rank"] > onTableAttack[number]["rank"])
       {
         check = true;
       }
-
-      if(checkObj["jokerSuit"] == true && onTableAttack[2]["jokerSuit"] == true)
+    }
+    else if(cardObj["jokerSuit"] == false && onTableAttack[number]["jokerSuit"] == false)
+    {
+      if(cardObj["suit"] == onTableAttack[number]["suit"])
       {
-        if(checkObj["rank"] > onTableAttack[2]["rank"])
+        if(cardObj["rank"] > onTableAttack[number]["rank"])
         {
           check = true;
         }
       }
-
-      if(checkObj["suit"] == onTableAttack[2]["suit"])
-      {
-        if(checkObj["rank"] > onTableAttack[2]["rank"])
-        {
-          check = true;
-        }
-      }
-  }
-  /*------------------------------------------------------------------------------*/
-  if(attackDefendCheck['position3'] == false && onTableAttack[3])
-  {
-      if(checkObj["jokerSuit"] == true && onTableAttack[3]["jokerSuit"] == false)
+    }
+    else
+    {
+      check = false;
+    }
+    break;
+    case 'position3':
+    number = openPosition.slice(openPosition.length - 1, );
+    if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == false)
+    {
+      check = true;
+    }
+    else if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == true)
+    {
+      if(cardObj["rank"] > onTableAttack[number]["rank"])
       {
         check = true;
       }
-
-      if(checkObj["jokerSuit"] == true && onTableAttack[3]["jokerSuit"] == true)
+    }
+    else if(cardObj["jokerSuit"] == false && onTableAttack[number]["jokerSuit"] == false)
+    {
+      if(cardObj["suit"] == onTableAttack[number]["suit"])
       {
-        if(checkObj["rank"] > onTableAttack[3]["rank"])
+        if(cardObj["rank"] > onTableAttack[number]["rank"])
         {
           check = true;
         }
       }
-
-      if(checkObj["suit"] == onTableAttack[3]["suit"])
-      {
-        if(checkObj["rank"] > onTableAttack[3]["rank"])
-        {
-          check = true;
-        }
-      }
-  }
-  /*------------------------------------------------------------------------------*/
-  if(attackDefendCheck['position4'] == false && onTableAttack[4])
-  {
-      if(checkObj["jokerSuit"] == true && onTableAttack[4]["jokerSuit"] == false)
+    }
+    else
+    {
+      check = false;
+    }
+    break;
+    case 'position4':
+    number = openPosition.slice(openPosition.length - 1, );
+    if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == false)
+    {
+      check = true;
+    }
+    else if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == true)
+    {
+      if(cardObj["rank"] > onTableAttack[number]["rank"])
       {
         check = true;
       }
-
-      if(checkObj["jokerSuit"] == true && onTableAttack[4]["jokerSuit"] == true)
+    }
+    else if(cardObj["jokerSuit"] == false && onTableAttack[number]["jokerSuit"] == false)
+    {
+      if(cardObj["suit"] == onTableAttack[number]["suit"])
       {
-        if(checkObj["rank"] > onTableAttack[4]["rank"])
+        if(cardObj["rank"] > onTableAttack[number]["rank"])
         {
           check = true;
         }
       }
-
-      if(checkObj["suit"] == onTableAttack[4]["suit"])
-      {
-        if(checkObj["rank"] > onTableAttack[4]["rank"])
-        {
-          check = true;
-        }
-      }
-  }
-  /*------------------------------------------------------------------------------*/
-  if(attackDefendCheck['position5'] == false && onTableAttack[5])
-  {
-      if(checkObj["jokerSuit"] == true && onTableAttack[5]["jokerSuit"] == false)
+    }
+    else
+    {
+      check = false;
+    }
+    break;
+    case 'position5':
+    number = openPosition.slice(openPosition.length - 1, );
+    if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == false)
+    {
+      check = true;
+    }
+    else if(cardObj["jokerSuit"] == true && onTableAttack[number]["jokerSuit"] == true)
+    {
+      if(cardObj["rank"] > onTableAttack[number]["rank"])
       {
         check = true;
       }
-
-      if(checkObj["jokerSuit"] == true && onTableAttack[5]["jokerSuit"] == true)
+    }
+    else if(cardObj["jokerSuit"] == false && onTableAttack[number]["jokerSuit"] == false)
+    {
+      if(cardObj["suit"] == onTableAttack[number]["suit"])
       {
-        if(checkObj["rank"] > onTableAttack[5]["rank"])
+        if(cardObj["rank"] > onTableAttack[number]["rank"])
         {
           check = true;
         }
       }
-
-      if(checkObj["suit"] == onTableAttack[5]["suit"])
-      {
-        if(checkObj["rank"] > onTableAttack[5]["rank"])
-        {
-          check = true;
-        }
-      }
+    }
+    else
+    {
+      check = false;
+    }
+    break;
+    default: check = false; break;
   }
-  /*------------------------------------------------------------------------------*/
   return check;
 }
 
@@ -416,7 +455,6 @@ let playerMove  = (e) =>
     if(checkAttack(cardObj) && checkAttackCounter())
     {
       socket.emit('attackMove', {roomName: roomName, cardIndex: cardIndex, player: whichPlayerAmI});
-      propponentCardField.removeChild(propponentCardField.childNodes[cardIndex]);
     }
   }
   else
@@ -424,7 +462,6 @@ let playerMove  = (e) =>
     if(checkDefend(cardObj))
     {
       socket.emit('defendMove', {roomName: roomName, cardIndex: cardIndex, player: whichPlayerAmI});
-      propponentCardField.removeChild(propponentCardField.childNodes[cardIndex]);
     }
   }
 }
@@ -691,6 +728,11 @@ socket.on('attackMoveMade', (data) => {
 });
 
 
+socket.on('attackMoveCheckPassed', (data)=> {
+  let cardIndex = Number(data["cardIndex"]);
+  propponentCardField.removeChild(propponentCardField.childNodes[cardIndex]);
+});
+
 socket.on('gettingAttacked', (data) => {
   renderOnTableAttack(data["onTableAttack"]);
   attackCounter = data["attackCounter"];
@@ -703,6 +745,12 @@ socket.on('defendMoveMade', (data) => {
   renderMyHand(data['myHand']);
   attackCounter = data["attackCounter"];
   attackDefendCheck = data["attackDefendCheck"];
+});
+
+
+socket.on('defendMoveCheckPassed', (data) => {
+  let cardIndex = Number(data["cardIndex"]);
+  propponentCardField.removeChild(propponentCardField.childNodes[cardIndex]);
 });
 
 socket.on('gotDefended', (data) => {
@@ -860,6 +908,7 @@ socket.on('clearGameExit', (data) => {
 
   let jokerSuitCardCover = document.getElementsByClassName('jokerSuitCardCover');
   lastCardPosition.removeChild(jokerSuitCardCover[0]);
+  deckCardCover.setAttribute("id", "deckCardCover");
   deckCardCover.style.visibility = "visible";
   $(opponetCardField).empty();
   $(propponentCardField).empty();
@@ -924,6 +973,7 @@ socket.on('restartGameClient', (data) => {
 
   let jokerSuitCardCover = document.getElementsByClassName('jokerSuitCardCover');
   lastCardPosition.removeChild(jokerSuitCardCover[0]);
+  deckCardCover.setAttribute("id", "deckCardCover");
   deckCardCover.style.visibility = "visible";
   $(opponetCardField).empty();
   $(propponentCardField).empty();
