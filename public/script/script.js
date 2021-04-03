@@ -1,6 +1,6 @@
 /* ------------------ GAME --------------------- */
 let roomName = '';
-let socket = io();
+let socket = io('https://durakpvp.herokuapp.com/');
 let mySocketID;
 let myHand = [];
 let opponentHand = 0;

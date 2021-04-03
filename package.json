@@ -2,9 +2,10 @@
   "name": "durak_game",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
+  "engines": { "node": "14.15.5" },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodejs server.js",
   },
   "keywords": [],
   "author": "",
