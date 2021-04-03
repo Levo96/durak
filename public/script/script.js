@@ -636,7 +636,7 @@ socket.on('startInfo', ()=> {
 $(sendMessageBtn).on('click', ()=> {
   if($('#messageInput').val() == "") {return;};
   let message = $('#messageInput').val();
-  socket.emit("handleMessage", {roomName: roomLog["roomName"], messageString: message});
+  socket.emit("handleMessage", {roomName: roomName, messageString: message});
   $('#messageInput').val("");
 });
 
@@ -650,6 +650,7 @@ socket.on('newMessage', (data)=> {
 
 /*----------------Redirect to Table and Chat ------------------- */
 socket.on('userJoinedRoom', (data) => {
+  roomName = data["name"];
   showGameRoom();
   socket.emit('getSocketID');
   $('#roomTitle').text('');
