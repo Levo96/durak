@@ -94,7 +94,7 @@ a
 }
 
 /*  --OptionButtonContainer Content ---- */
-#toCreateRoomBtn,#toJoinRoomBtn,#toVsCpuBtn
+#toCreateRoomBtn,#toJoinRoomBtn,#toVsCpuBtn, #gameInfoBtn
 {
   margin: 25px 0;
   width: 250px;
@@ -109,6 +109,7 @@ a
   cursor: pointer;
   box-shadow: 3px 3px 5px 3px black;
 }
+
 #toVsCpuBtn a
 {
   color: black;

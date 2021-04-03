@@ -38,7 +38,7 @@ let openChatBox = document.getElementById('roomChatOpener');
 let chatBox = document.getElementById('chatBoxContainer');
 let sendMessageBtn = document.getElementById('sendMessageBtn');
 let closeChatBoxBtn = document.getElementById('closeChatBoxBtn');
-
+let infoBtn = document.getElementById('gameInfoBtn');
 /* --------------- GAMEPAGE/GAME TABLE -------------------------------- */
 
 // ------------ Deck Cards--------------------------------
@@ -433,7 +433,11 @@ let checkDefend = (obj) =>
 
 let checkAttackCounter = () =>
 {
-  if(attackCounter < 7)
+  if(attackCounter == 6)
+  {
+    return false;
+  }
+  else if(attackCounter < 7)
   {
     return true;
   }
@@ -992,8 +996,10 @@ socket.on('restartGameClient', (data) => {
   trashCardCover.style.visibility = "hidden";
 
   socket.emit('clientGameRestarted', {roomName: roomName});
-
 });
 
+infoBtn.addEventListener('click', () => {
+  alert('-----------RULE SET-----------\nRegular: No Shifting, No Cheating\n-------------NOTE---------\nWhen beeing attacked with multiple Cards, the Card you click on your Hand defends the most left Card, the positions are from left to right, so when clicking on card in your hand you defend the most left undefend card and after the move was made the next most left undefended card\n------------------------------NOTE------------------------\nwhen finishing a Round click the finish button to change turn\nby clicking the chatbox text you can send messages and if the chatbox text glows green you have a new message');
+});
 /* ------------------------------------ */
 hideCreateAndJoinRoomContainer();
