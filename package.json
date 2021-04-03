@@ -5,7 +5,7 @@
   "main": "server.js",
   "engines": { "node": "14.15.5" },
   "scripts": {
-    "start": "nodejs server.js",
+    "start": "nodejs server.js"
   },
   "keywords": [],
   "author": "",
