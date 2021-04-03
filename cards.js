@@ -1,3 +1,4 @@
+//allCards
 let allCards = [
   {
     rank: 1,
