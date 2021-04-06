@@ -1,5 +1,7 @@
-# Durak PVP Card Game
+# Durak Card Game PVP
 
+Rules: (https://en.wikipedia.org/wiki/Durak)
+  
 made with:
   * NodeJS
   * ExpressJS
